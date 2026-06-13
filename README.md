@@ -1,2 +1,1 @@
-# GenAI-Assignments
-GenAI Course Assignments
+# genai-assignments
