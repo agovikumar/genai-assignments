@@ -1,0 +1,1410 @@
+{
+  "info": {
+    "_postman_id": "3f9ffd29-ebd1-464f-9c87-941e42c531c1",
+    "name": "Cohere API",
+    "description": "Postman collection for the Cohere API (v2 and legacy v1 endpoints), generated from https://docs.cohere.com/reference/about",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{apiKey}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://api.cohere.com",
+      "type": "string"
+    },
+    {
+      "key": "apiKey",
+      "value": "YOUR_COHERE_API_KEY",
+      "type": "string"
+    },
+    {
+      "key": "datasetId",
+      "value": "your-dataset-id",
+      "type": "string"
+    },
+    {
+      "key": "embedJobId",
+      "value": "your-embed-job-id",
+      "type": "string"
+    },
+    {
+      "key": "modelName",
+      "value": "command-a-03-2025",
+      "type": "string"
+    },
+    {
+      "key": "connectorId",
+      "value": "your-connector-id",
+      "type": "string"
+    },
+    {
+      "key": "finetunedModelId",
+      "value": "your-finetuned-model-id",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Chat",
+      "item": [
+        {
+          "name": "Chat",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "X-Client-Name",
+                "value": "postman-collection",
+                "type": "text",
+                "disabled": true
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v2/chat",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v2",
+                "chat"
+              ]
+            },
+            "description": "Generates a text response to a user message. See https://docs.cohere.com/reference/chat",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"model\": \"command-a-plus-05-2026\",\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"Tell me about LLMs\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Chat with Streaming",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "X-Client-Name",
+                "value": "postman-collection",
+                "type": "text",
+                "disabled": true
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v2/chat",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v2",
+                "chat"
+              ]
+            },
+            "description": "Generates a streamed text response (SSE) to a user message. See https://docs.cohere.com/reference/chat-stream",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"model\": \"command-a-plus-05-2026\",\n  \"stream\": true,\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"Tell me about LLMs\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Rerank",
+      "item": [
+        {
+          "name": "Rerank",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "X-Client-Name",
+                "value": "postman-collection",
+                "type": "text",
+                "disabled": true
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v2/rerank",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v2",
+                "rerank"
+              ]
+            },
+            "description": "Takes a query and a list of texts and produces an ordered array with each text assigned a relevance score. See https://docs.cohere.com/reference/rerank",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"model\": \"rerank-v4.0-pro\",\n  \"query\": \"What is the capital of the United States?\",\n  \"documents\": [\n    \"Carson City is the capital city of the American state of Nevada.\",\n    \"The Commonwealth of the Northern Mariana Islands is a group of islands in the Pacific Ocean. Its capital is Saipan.\",\n    \"Capitalization or capitalisation in English grammar is the use of a capital letter at the start of a word.\",\n    \"Washington, D.C. is the capital of the United States. It is a federal district.\",\n    \"Capital punishment has existed in the United States since before the United States was a country.\"\n  ],\n  \"top_n\": 3\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Embed",
+      "item": [
+        {
+          "name": "Embed",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "X-Client-Name",
+                "value": "postman-collection",
+                "type": "text",
+                "disabled": true
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v2/embed",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v2",
+                "embed"
+              ]
+            },
+            "description": "Returns text (and/or image) embeddings. See https://docs.cohere.com/reference/embed",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"model\": \"embed-v4.0\",\n  \"input_type\": \"classification\",\n  \"embedding_types\": [\n    \"float\"\n  ],\n  \"inputs\": [\n    {\n      \"content\": [\n        {\n          \"type\": \"text\",\n          \"text\": \"hello\"\n        }\n      ]\n    },\n    {\n      \"content\": [\n        {\n          \"type\": \"text\",\n          \"text\": \"goodbye\"\n        }\n      ]\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Embed Jobs",
+      "item": [
+        {
+          "name": "Create an Embed Job",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "X-Client-Name",
+                "value": "postman-collection",
+                "type": "text",
+                "disabled": true
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/embed-jobs",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "embed-jobs"
+              ]
+            },
+            "description": "Launches an async Embed job for a Dataset of type embed-input. https://docs.cohere.com/reference/create-embed-job",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"model\": \"embed-english-v3.0\",\n  \"dataset_id\": \"{{datasetId}}\",\n  \"input_type\": \"search_document\",\n  \"name\": \"my-embed-job\",\n  \"truncate\": \"END\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "List Embed Jobs",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "X-Client-Name",
+                "value": "postman-collection",
+                "type": "text",
+                "disabled": true
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/embed-jobs",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "embed-jobs"
+              ]
+            },
+            "description": "View all embed jobs history. https://docs.cohere.com/reference/list-embed-jobs"
+          },
+          "response": []
+        },
+        {
+          "name": "Fetch an Embed Job",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "X-Client-Name",
+                "value": "postman-collection",
+                "type": "text",
+                "disabled": true
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/embed-jobs/{{embedJobId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "embed-jobs",
+                "{{embedJobId}}"
+              ]
+            },
+            "description": "Retrieves the details about an embed job. https://docs.cohere.com/reference/get-embed-job"
+          },
+          "response": []
+        },
+        {
+          "name": "Cancel an Embed Job",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "X-Client-Name",
+                "value": "postman-collection",
+                "type": "text",
+                "disabled": true
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/embed-jobs/{{embedJobId}}/cancel",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "embed-jobs",
+                "{{embedJobId}}",
+                "cancel"
+              ]
+            },
+            "description": "Cancels an active embed job. https://docs.cohere.com/reference/cancel-embed-job"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Audio Transcription",
+      "item": [
+        {
+          "name": "Create a transcription",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-Client-Name",
+                "value": "postman-collection",
+                "type": "text",
+                "disabled": true
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v2/audio/transcriptions",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v2",
+                "audio",
+                "transcriptions"
+              ]
+            },
+            "description": "Transcribe an audio file. Supported extensions: flac, mp3, mpeg, mpga, ogg, wav. https://docs.cohere.com/reference/create-audio-transcription",
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "model",
+                  "value": "cohere-transcribe-03-2026",
+                  "type": "text"
+                },
+                {
+                  "key": "language",
+                  "value": "en",
+                  "type": "text"
+                },
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": []
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Datasets",
+      "item": [
+        {
+          "name": "Create a Dataset",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-Client-Name",
+                "value": "postman-collection",
+                "type": "text",
+                "disabled": true
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/datasets?name=embed-dataset&type=embed-input&keep_original_file=false&skip_malformed_input=false",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "datasets"
+              ],
+              "query": [
+                {
+                  "key": "name",
+                  "value": "embed-dataset"
+                },
+                {
+                  "key": "type",
+                  "value": "embed-input"
+                },
+                {
+                  "key": "keep_original_file",
+                  "value": "false",
+                  "disabled": true
+                },
+                {
+                  "key": "skip_malformed_input",
+                  "value": "false",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Create a dataset by uploading a file. https://docs.cohere.com/reference/create-dataset",
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "data",
+                  "type": "file",
+                  "src": []
+                },
+                {
+                  "key": "eval_data",
+                  "type": "file",
+                  "src": [],
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "List Datasets",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "X-Client-Name",
+                "value": "postman-collection",
+                "type": "text",
+                "disabled": true
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/datasets?datasetType=&before=&after=&limit=&offset=&validationStatus=",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "datasets"
+              ],
+              "query": [
+                {
+                  "key": "datasetType",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "before",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "after",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "limit",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "offset",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "validationStatus",
+                  "value": "",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "List datasets that have been created. https://docs.cohere.com/reference/list-datasets"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Dataset Usage",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "X-Client-Name",
+                "value": "postman-collection",
+                "type": "text",
+                "disabled": true
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/datasets/usage",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "datasets",
+                "usage"
+              ]
+            },
+            "description": "View dataset storage usage for your Organization. https://docs.cohere.com/reference/get-dataset-usage"
+          },
+          "response": []
+        },
+        {
+          "name": "Get a Dataset",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "X-Client-Name",
+                "value": "postman-collection",
+                "type": "text",
+                "disabled": true
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/datasets/{{datasetId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "datasets",
+                "{{datasetId}}"
+              ]
+            },
+            "description": "Retrieve a dataset by ID. https://docs.cohere.com/reference/get-dataset"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete a Dataset",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "X-Client-Name",
+                "value": "postman-collection",
+                "type": "text",
+                "disabled": true
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/datasets/{{datasetId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "datasets",
+                "{{datasetId}}"
+              ]
+            },
+            "description": "Delete a dataset by ID. https://docs.cohere.com/reference/delete-dataset"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Tokenize",
+      "item": [
+        {
+          "name": "Tokenize",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "X-Client-Name",
+                "value": "postman-collection",
+                "type": "text",
+                "disabled": true
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/tokenize",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "tokenize"
+              ]
+            },
+            "description": "Splits input text into tokens using byte-pair encoding (BPE). https://docs.cohere.com/reference/tokenize",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"text\": \"tokenize me! :D\",\n  \"model\": \"command-a-03-2025\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Detokenize",
+      "item": [
+        {
+          "name": "Detokenize",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "X-Client-Name",
+                "value": "postman-collection",
+                "type": "text",
+                "disabled": true
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/detokenize",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "detokenize"
+              ]
+            },
+            "description": "Takes tokens using byte-pair encoding and returns their text representation. https://docs.cohere.com/reference/detokenize",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tokens\": [\n    10002,\n    2261,\n    2012,\n    8,\n    2792,\n    43\n  ],\n  \"model\": \"command-a-03-2025\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Models",
+      "item": [
+        {
+          "name": "Get a Model",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "X-Client-Name",
+                "value": "postman-collection",
+                "type": "text",
+                "disabled": true
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/models/{{modelName}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "models",
+                "{{modelName}}"
+              ]
+            },
+            "description": "Returns the details of a model, provided its name. https://docs.cohere.com/reference/get-model"
+          },
+          "response": []
+        },
+        {
+          "name": "List Models",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "X-Client-Name",
+                "value": "postman-collection",
+                "type": "text",
+                "disabled": true
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/models?page_size=20&page_token=&endpoint=&default_only=false",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "models"
+              ],
+              "query": [
+                {
+                  "key": "page_size",
+                  "value": "20",
+                  "disabled": true
+                },
+                {
+                  "key": "page_token",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "endpoint",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "default_only",
+                  "value": "false",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Returns a list of models available for use. https://docs.cohere.com/reference/list-models"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Classify (Deprecated)",
+      "item": [
+        {
+          "name": "Classify",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "X-Client-Name",
+                "value": "postman-collection",
+                "type": "text",
+                "disabled": true
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/classify",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "classify"
+              ]
+            },
+            "description": "[Deprecated] Predicts which label fits the specified text inputs best. https://docs.cohere.com/reference/classify",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"model\": \"<YOUR-FINE-TUNED-MODEL-ID>\",\n  \"inputs\": [\n    \"Confirm your email address\",\n    \"hey i need u to send some $\"\n  ],\n  \"examples\": [\n    {\n      \"text\": \"Dermatologists don't like her!\",\n      \"label\": \"Spam\"\n    },\n    {\n      \"text\": \"Hello, open to this?\",\n      \"label\": \"Spam\"\n    },\n    {\n      \"text\": \"I need help please wire me $1000 right now\",\n      \"label\": \"Spam\"\n    },\n    {\n      \"text\": \"Nice to know you ;)\",\n      \"label\": \"Spam\"\n    },\n    {\n      \"text\": \"Please help me?\",\n      \"label\": \"Spam\"\n    },\n    {\n      \"text\": \"Your parcel will be delivered today\",\n      \"label\": \"Not spam\"\n    },\n    {\n      \"text\": \"Review changes to our Terms and Conditions\",\n      \"label\": \"Not spam\"\n    },\n    {\n      \"text\": \"Weekly sync notes\",\n      \"label\": \"Not spam\"\n    },\n    {\n      \"text\": \"Re: Follow up from today's meeting\",\n      \"label\": \"Not spam\"\n    },\n    {\n      \"text\": \"Pre-read for tomorrow\",\n      \"label\": \"Not spam\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Connectors (Deprecated)",
+      "item": [
+        {
+          "name": "List Connectors",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "X-Client-Name",
+                "value": "postman-collection",
+                "type": "text",
+                "disabled": true
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/connectors?limit=30&offset=0",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "connectors"
+              ],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "30",
+                  "disabled": true
+                },
+                {
+                  "key": "offset",
+                  "value": "0",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Returns a list of connectors ordered by descending creation date. https://docs.cohere.com/reference/list-connectors"
+          },
+          "response": []
+        },
+        {
+          "name": "Create a Connector",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "X-Client-Name",
+                "value": "postman-collection",
+                "type": "text",
+                "disabled": true
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/connectors",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "connectors"
+              ]
+            },
+            "description": "Creates a new connector. https://docs.cohere.com/reference/create-connector",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Example connector\",\n  \"url\": \"https://connector-example.com/search\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get a Connector",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "X-Client-Name",
+                "value": "postman-collection",
+                "type": "text",
+                "disabled": true
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/connectors/{{connectorId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "connectors",
+                "{{connectorId}}"
+              ]
+            },
+            "description": "Retrieve a connector by ID. https://docs.cohere.com/reference/get-connector"
+          },
+          "response": []
+        },
+        {
+          "name": "Update a Connector",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "X-Client-Name",
+                "value": "postman-collection",
+                "type": "text",
+                "disabled": true
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/connectors/{{connectorId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "connectors",
+                "{{connectorId}}"
+              ]
+            },
+            "description": "Update a connector by ID. Omitted fields will not be updated. https://docs.cohere.com/reference/update-connector",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"new name\",\n  \"url\": \"https://example.com/search\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete a Connector",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "X-Client-Name",
+                "value": "postman-collection",
+                "type": "text",
+                "disabled": true
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/connectors/{{connectorId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "connectors",
+                "{{connectorId}}"
+              ]
+            },
+            "description": "Delete a connector by ID. https://docs.cohere.com/reference/delete-connector"
+          },
+          "response": []
+        },
+        {
+          "name": "Authorize with oAuth",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "X-Client-Name",
+                "value": "postman-collection",
+                "type": "text",
+                "disabled": true
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/connectors/{{connectorId}}/oauth/authorize?after_token_redirect=https://example.com",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "connectors",
+                "{{connectorId}}",
+                "oauth",
+                "authorize"
+              ],
+              "query": [
+                {
+                  "key": "after_token_redirect",
+                  "value": "https://example.com",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Authorize the connector for the connector oauth app. https://docs.cohere.com/reference/oauthauthorize-connector"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Fine-tuning (Deprecated)",
+      "item": [
+        {
+          "name": "List Fine-tuned Models",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "X-Client-Name",
+                "value": "postman-collection",
+                "type": "text",
+                "disabled": true
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/finetuning/finetuned-models?page_size=&page_token=&order_by=created_at desc",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "finetuning",
+                "finetuned-models"
+              ],
+              "query": [
+                {
+                  "key": "page_size",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "page_token",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "order_by",
+                  "value": "created_at desc",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Lists fine-tuned models the user has access to. https://docs.cohere.com/reference/listfinetunedmodels"
+          },
+          "response": []
+        },
+        {
+          "name": "Create a Fine-tuned Model",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "X-Client-Name",
+                "value": "postman-collection",
+                "type": "text",
+                "disabled": true
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/finetuning/finetuned-models",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "finetuning",
+                "finetuned-models"
+              ]
+            },
+            "description": "Trains and deploys a fine-tuned model. https://docs.cohere.com/reference/createfinetunedmodel",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"test-finetuned-model\",\n  \"settings\": {\n    \"base_model\": {\n      \"base_type\": \"BASE_TYPE_CHAT\"\n    },\n    \"dataset_id\": \"{{datasetId}}\",\n    \"hyperparameters\": {\n      \"early_stopping_patience\": 10,\n      \"early_stopping_threshold\": 0.001,\n      \"train_batch_size\": 16,\n      \"train_epochs\": 1,\n      \"learning_rate\": 0.01\n    }\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update a Fine-tuned Model",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "X-Client-Name",
+                "value": "postman-collection",
+                "type": "text",
+                "disabled": true
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/finetuning/finetuned-models/{{finetunedModelId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "finetuning",
+                "finetuned-models",
+                "{{finetunedModelId}}"
+              ]
+            },
+            "description": "Updates a fine-tuned model. https://docs.cohere.com/reference/updatefinetunedmodel",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"new name\",\n  \"settings\": {\n    \"base_model\": {\n      \"base_type\": \"BASE_TYPE_CHAT\"\n    },\n    \"dataset_id\": \"{{datasetId}}\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get a Fine-tuned Model",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "X-Client-Name",
+                "value": "postman-collection",
+                "type": "text",
+                "disabled": true
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/finetuning/finetuned-models/{{finetunedModelId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "finetuning",
+                "finetuned-models",
+                "{{finetunedModelId}}"
+              ]
+            },
+            "description": "Returns a fine-tuned model by ID. https://docs.cohere.com/reference/getfinetunedmodel"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete a Fine-tuned Model",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "X-Client-Name",
+                "value": "postman-collection",
+                "type": "text",
+                "disabled": true
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/finetuning/finetuned-models/{{finetunedModelId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "finetuning",
+                "finetuned-models",
+                "{{finetunedModelId}}"
+              ]
+            },
+            "description": "Deletes a fine-tuned model. Irreversible. https://docs.cohere.com/reference/deletefinetunedmodel"
+          },
+          "response": []
+        },
+        {
+          "name": "List Events",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "X-Client-Name",
+                "value": "postman-collection",
+                "type": "text",
+                "disabled": true
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/finetuning/finetuned-models/{{finetunedModelId}}/events?page_size=&page_token=&order_by=",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "finetuning",
+                "finetuned-models",
+                "{{finetunedModelId}}",
+                "events"
+              ],
+              "query": [
+                {
+                  "key": "page_size",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "page_token",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "order_by",
+                  "value": "",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Fetch history of statuses for a fine-tuned model. https://docs.cohere.com/reference/listevents"
+          },
+          "response": []
+        },
+        {
+          "name": "List Training Step Metrics",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "X-Client-Name",
+                "value": "postman-collection",
+                "type": "text",
+                "disabled": true
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/finetuning/finetuned-models/{{finetunedModelId}}/training-step-metrics?page_size=&page_token=",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "finetuning",
+                "finetuned-models",
+                "{{finetunedModelId}}",
+                "training-step-metrics"
+              ],
+              "query": [
+                {
+                  "key": "page_size",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "page_token",
+                  "value": "",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Retrieve training metrics for fine-tuned models. https://docs.cohere.com/reference/listtrainingstepmetrics"
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
