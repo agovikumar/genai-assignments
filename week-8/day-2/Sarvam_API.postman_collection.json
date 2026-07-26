@@ -1,0 +1,4275 @@
+{
+  "info": {
+    "_postman_id": "ac2c2e5d-2c6e-4d82-9f76-18f9ac97e7d5",
+    "name": "Sarvam AI API",
+    "description": "Complete collection generated from Sarvam AI's published API Reference. Set `api_key` in the companion environment before sending requests. WebSocket endpoints are represented as importable request definitions; use Postman's WebSocket client where applicable.\n\nDocumentation: https://docs.sarvam.ai/api-reference/introduction",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "apikey",
+    "apikey": [
+      {
+        "key": "key",
+        "value": "api-subscription-key",
+        "type": "string"
+      },
+      {
+        "key": "value",
+        "value": "{{api_key}}",
+        "type": "string"
+      },
+      {
+        "key": "in",
+        "value": "header",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://api.sarvam.ai",
+      "type": "string"
+    },
+    {
+      "key": "wsBaseUrl",
+      "value": "wss://api.sarvam.ai",
+      "type": "string"
+    },
+    {
+      "key": "api_key",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "audio_file",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "job_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "dict_id",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Speech to Text",
+      "item": [
+        {
+          "name": "REST",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "api-subscription-key",
+                "value": "{{api_key}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/speech-to-text",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "speech-to-text"
+              ]
+            },
+            "description": "## Speech to Text API\n\nThis API transcribes speech to text in multiple Indian languages and English. Supports transcription for interactive applications.\n\n### Available Options:\n- **REST API** (Current Endpoint): For quick responses under 30 seconds with immediate results\n- **Batch API**: For longer audio files, [Follow This Documentation](https://docs.sarvam.ai/api-reference-docs/api-guides-tutorials/speech-to-text/batch-api)\n  - Supports diarization (speaker identification)\n\n### Note:\n- Pricing differs for REST and Batch APIs\n- Diarization is only available in Batch API with separate pricing\n- Please refer to [here](https://docs.sarvam.ai/api-reference-docs/pricing) for detailed pricing information\n\nSource: https://docs.sarvam.ai/api-reference/speech-to-text/transcribe",
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": "{{audio_file}}",
+                  "description": "The audio file to transcribe. Supported formats include WAV, MP3, AAC, AIFF, OGG, OPUS, FLAC, MP4/M4A, AMR, WMA, WebM, and PCM formats. The API automatically detects most codec formats, but for PCM files (pcm_s16le, pcm_l16, pcm_raw), you must specify the input_audio_codec parameter. PCM files are supported only at 16kHz sample rate.\nThe API works best with audio files sampled at 16kHz. If the audio contains multiple channels, they will be merged into a single channel."
+                },
+                {
+                  "key": "model",
+                  "type": "text",
+                  "src": "",
+                  "description": "Specifies the model to use for speech-to-text conversion.\n\n- **saaras:v3** (default, recommended): State-of-the-art model with flexible output formats. Supports multiple modes via the `mode` parameter: transcribe, translate, verbatim, translit, codemix.\n\n- **saarika:v2.5** (legacy): Transcribes audio in the spoken language. Kept for backward compatibility."
+                },
+                {
+                  "key": "mode",
+                  "type": "text",
+                  "src": "",
+                  "description": "Mode of operation. **Only applicable when using saaras:v3 model.**\n\nExample audio: 'मेरा फोन नंबर है 9840950950'\n\n- **transcribe** (default): Standard transcription in the original language with proper formatting and number normalization.\n  - Output: `मेरा फोन नंबर है 9840950950`\n\n- **translate**: Translates speech from any supported Indic language to English.\n  - Output: `My phone number is 9840950950`\n\n- **verbatim**: Exact word-for-word transcription without normalization, preserving filler words and spoken numbers as-is.\n  - Output: `मेरा फोन नंबर है नौ आठ चार zero नौ पांच zero नौ पांच zero`\n\n- **translit**: Romanization - Transliterates speech to Latin/Roman script only.\n  - Output: `mera phone number hai 9840950950`\n\n- **codemix**: Code-mixed text with English words in English and Indic words in native script.\n  - Output: `मेरा phone number है 9840950950`"
+                },
+                {
+                  "key": "language_code",
+                  "type": "text",
+                  "src": "",
+                  "description": "Specifies the language of the input audio in BCP-47 format.\n\n**Note:** This parameter is optional for `saarika:v2.5` model.\n\n**Available Options:**\n- `unknown`: Use when the language is not known; the API will auto-detect.\n- `hi-IN`: Hindi\n- `bn-IN`: Bengali\n- `kn-IN`: Kannada\n- `ml-IN`: Malayalam\n- `mr-IN`: Marathi\n- `od-IN`: Odia\n- `pa-IN`: Punjabi\n- `ta-IN`: Tamil\n- `te-IN`: Telugu\n- `en-IN`: English\n- `gu-IN`: Gujarati\n\n**Additional Options (saaras:v3 only):**\n- `as-IN`: Assamese\n- `ur-IN`: Urdu\n- `ne-IN`: Nepali\n- `kok-IN`: Konkani\n- `ks-IN`: Kashmiri\n- `sd-IN`: Sindhi\n- `sa-IN`: Sanskrit\n- `sat-IN`: Santali\n- `mni-IN`: Manipuri\n- `brx-IN`: Bodo\n- `mai-IN`: Maithili\n- `doi-IN`: Dogri"
+                },
+                {
+                  "key": "input_audio_codec",
+                  "type": "text",
+                  "src": "",
+                  "description": "Input Audio codec/format of the input file. PCM files are supported only at 16kHz sample rate."
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "200 Successful Response",
+              "originalRequest": {},
+              "status": "Successful Response",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"request_id\": \"20240615_1a2b3c4d-5678-90ab-cdef-1234567890ab\",\n  \"transcript\": \"नमस्ते, आप कैसे हैं?\",\n  \"language_code\": \"hi-IN\",\n  \"timestamps\": {\n    \"words\": [\n      \"नमस्ते\",\n      \"आप\",\n      \"कैसे\",\n      \"हैं?\"\n    ],\n    \"start_time_seconds\": [\n      0,\n      0.5,\n      1,\n      1.5\n    ],\n    \"end_time_seconds\": [\n      0.5,\n      1,\n      1.5,\n      2\n    ],\n    \"timestamps\": {\n      \"end_time_seconds\": [\n        2\n      ],\n      \"start_time_seconds\": [\n        0\n      ],\n      \"words\": [\n        \"नमस्ते, आप कैसे हैं?\"\n      ]\n    }\n  },\n  \"diarized_transcript\": {\n    \"entries\": [\n      {\n        \"transcript\": \"नमस्ते, आप कैसे हैं?\",\n        \"start_time_seconds\": 0,\n        \"end_time_seconds\": 2,\n        \"speaker_id\": \"speaker_1\"\n      }\n    ]\n  },\n  \"language_probability\": 0.95\n}"
+            },
+            {
+              "name": "400 Bad Request",
+              "originalRequest": {},
+              "status": "Bad Request",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "403 Forbidden",
+              "originalRequest": {},
+              "status": "Forbidden",
+              "code": 403,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "422 Unprocessable Entity",
+              "originalRequest": {},
+              "status": "Unprocessable Entity",
+              "code": 422,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "429 Quota Exceeded",
+              "originalRequest": {},
+              "status": "Quota Exceeded",
+              "code": 429,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "500 Internal Server Error",
+              "originalRequest": {},
+              "status": "Internal Server Error",
+              "code": 500,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "503 Service Overloaded",
+              "originalRequest": {},
+              "status": "Service Overloaded",
+              "code": 503,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            }
+          ]
+        },
+        {
+          "name": "WebSocket",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Api-Subscription-Key",
+                "value": "{{api_key}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{wsBaseUrl}}/speech-to-text/ws",
+              "host": [
+                "{{wsBaseUrl}}"
+              ],
+              "path": [
+                "speech-to-text",
+                "ws"
+              ],
+              "query": [
+                {
+                  "key": "language-code",
+                  "value": "",
+                  "description": "",
+                  "disabled": true
+                },
+                {
+                  "key": "model",
+                  "value": "saaras:v3",
+                  "description": "",
+                  "disabled": false
+                },
+                {
+                  "key": "mode",
+                  "value": "transcribe",
+                  "description": "",
+                  "disabled": false
+                },
+                {
+                  "key": "sample_rate",
+                  "value": "16000",
+                  "description": "",
+                  "disabled": false
+                },
+                {
+                  "key": "high_vad_sensitivity",
+                  "value": "",
+                  "description": "",
+                  "disabled": true
+                },
+                {
+                  "key": "positive_speech_threshold",
+                  "value": "0.7",
+                  "description": "",
+                  "disabled": false
+                },
+                {
+                  "key": "negative_speech_threshold",
+                  "value": "0.45",
+                  "description": "",
+                  "disabled": false
+                },
+                {
+                  "key": "min_speech_frames",
+                  "value": "2",
+                  "description": "",
+                  "disabled": false
+                },
+                {
+                  "key": "first_turn_min_speech_frames",
+                  "value": "8",
+                  "description": "",
+                  "disabled": false
+                },
+                {
+                  "key": "negative_frames_count",
+                  "value": "18",
+                  "description": "",
+                  "disabled": false
+                },
+                {
+                  "key": "negative_frames_window",
+                  "value": "24",
+                  "description": "",
+                  "disabled": false
+                },
+                {
+                  "key": "start_speech_volume_threshold",
+                  "value": "",
+                  "description": "",
+                  "disabled": true
+                },
+                {
+                  "key": "interrupt_min_speech_frames",
+                  "value": "2",
+                  "description": "",
+                  "disabled": false
+                },
+                {
+                  "key": "pre_speech_pad_frames",
+                  "value": "9",
+                  "description": "",
+                  "disabled": false
+                },
+                {
+                  "key": "num_initial_ignored_frames",
+                  "value": "0",
+                  "description": "",
+                  "disabled": false
+                },
+                {
+                  "key": "vad_signals",
+                  "value": "",
+                  "description": "",
+                  "disabled": true
+                },
+                {
+                  "key": "flush_signal",
+                  "value": "",
+                  "description": "",
+                  "disabled": true
+                },
+                {
+                  "key": "input_audio_codec",
+                  "value": "",
+                  "description": "",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "WebSocket channel for real-time speech to text streaming.\n\n**Note:** This API Reference page is provided for informational purposes only. \nThe Try It playground may not provide the best experience for streaming audio. \nFor optimal streaming performance, please use the SDK or implement your own WebSocket client.\n\nThis is a WebSocket endpoint. Import the collection, then open this endpoint in Postman's WebSocket client and set the `Api-Subscription-Key` connection header.\n\nSource: https://docs.sarvam.ai/api-reference/speech-to-text/transcribe/ws"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Speech to Text / Batch",
+      "item": [
+        {
+          "name": "Initiate Job",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "api-subscription-key",
+                "value": "{{api_key}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/speech-to-text/job/v1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "speech-to-text",
+                "job",
+                "v1"
+              ]
+            },
+            "description": "Create a new speech to text bulk job and receive a job UUID and storage folder details for processing multiple audio files. Set `job_parameters.input_audio_codec` when uploads are raw PCM (`pcm_s16le`, `pcm_l16`, or `pcm_raw`); the API auto-detects other formats. PCM must be 16 kHz.\n\nSource: https://docs.sarvam.ai/api-reference/speech-to-text/stt/job/initiate",
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "name": "202 Successful Response",
+              "originalRequest": {},
+              "status": "Successful Response",
+              "code": 202,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"job_id\": \"job_9f8b7c6d5e4a3b2c1d0e\",\n  \"storage_container_type\": \"Azure_V1\",\n  \"job_parameters\": {},\n  \"job_state\": \"Accepted\"\n}"
+            },
+            {
+              "name": "400 Bad Request",
+              "originalRequest": {},
+              "status": "Bad Request",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "403 Forbidden",
+              "originalRequest": {},
+              "status": "Forbidden",
+              "code": 403,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "422 Unprocessable Entity",
+              "originalRequest": {},
+              "status": "Unprocessable Entity",
+              "code": 422,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "429 Quota Exceeded",
+              "originalRequest": {},
+              "status": "Quota Exceeded",
+              "code": 429,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "500 Internal Server Error",
+              "originalRequest": {},
+              "status": "Internal Server Error",
+              "code": 500,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "503 Service Overloaded",
+              "originalRequest": {},
+              "status": "Service Overloaded",
+              "code": 503,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            }
+          ]
+        },
+        {
+          "name": "Upload Files",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "api-subscription-key",
+                "value": "{{api_key}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/speech-to-text/job/v1/upload-files",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "speech-to-text",
+                "job",
+                "v1",
+                "upload-files"
+              ]
+            },
+            "description": "Generate presigned upload URLs for audio files that will be processed in a speech to text bulk job\n\nSource: https://docs.sarvam.ai/api-reference/speech-to-text/stt/job/upload",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"job_id\": \"3fa85f64-5717-4562-b3fc-2c963f66afa6\",\n  \"files\": [\n    \"audio_001.wav\",\n    \"audio_002.wav\",\n    \"audio_003.wav\"\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "name": "200 Successful Response",
+              "originalRequest": {},
+              "status": "Successful Response",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"job_id\": \"3fa85f64-5717-4562-b3fc-2c963f66afa6\",\n  \"job_state\": \"Accepted\",\n  \"upload_urls\": {},\n  \"storage_container_type\": \"Azure\"\n}"
+            },
+            {
+              "name": "400 Bad Request",
+              "originalRequest": {},
+              "status": "Bad Request",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "403 Forbidden",
+              "originalRequest": {},
+              "status": "Forbidden",
+              "code": 403,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "422 Unprocessable Entity",
+              "originalRequest": {},
+              "status": "Unprocessable Entity",
+              "code": 422,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "429 Quota Exceeded",
+              "originalRequest": {},
+              "status": "Quota Exceeded",
+              "code": 429,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "500 Internal Server Error",
+              "originalRequest": {},
+              "status": "Internal Server Error",
+              "code": 500,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "503 Service Overloaded",
+              "originalRequest": {},
+              "status": "Service Overloaded",
+              "code": 503,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            }
+          ]
+        },
+        {
+          "name": "Start Job",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "api-subscription-key",
+                "value": "{{api_key}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/speech-to-text/job/v1/{{job_id}}/start",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "speech-to-text",
+                "job",
+                "v1",
+                "{job_id}",
+                "start"
+              ],
+              "query": [
+                {
+                  "key": "ptu_id",
+                  "value": "",
+                  "description": "",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Start processing a speech to text bulk job after all audio files have been uploaded\n\nSource: https://docs.sarvam.ai/api-reference/speech-to-text/stt/job/start"
+          },
+          "response": [
+            {
+              "name": "200 Successful Response",
+              "originalRequest": {},
+              "status": "Successful Response",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"job_state\": \"Accepted\",\n  \"created_at\": \"2024-06-10T09:15:00Z\",\n  \"updated_at\": \"2024-06-10T09:15:00Z\",\n  \"job_id\": \"a3f1c9e2-7b4d-4f8a-9c2e-1d2b3f4a5e6f\",\n  \"storage_container_type\": \"Azure\",\n  \"total_files\": 12,\n  \"successful_files_count\": 0,\n  \"failed_files_count\": 0,\n  \"error_message\": \"\",\n  \"job_details\": [\n    {\n      \"inputs\": [\n        {\n          \"file_name\": \"interview_recording_01.wav\",\n          \"file_id\": \"file-1234567890abcdef\"\n        }\n      ],\n      \"outputs\": [\n        {\n          \"file_name\": \"interview_recording_01_transcript.json\",\n          \"file_id\": \"file-abcdef1234567890\"\n        }\n      ],\n      \"state\": \"Success\",\n      \"error_message\": null,\n      \"exception_name\": null\n    }\n  ]\n}"
+            },
+            {
+              "name": "400 Bad Request",
+              "originalRequest": {},
+              "status": "Bad Request",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "403 Forbidden",
+              "originalRequest": {},
+              "status": "Forbidden",
+              "code": 403,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "422 Unprocessable Entity",
+              "originalRequest": {},
+              "status": "Unprocessable Entity",
+              "code": 422,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "429 Quota Exceeded",
+              "originalRequest": {},
+              "status": "Quota Exceeded",
+              "code": 429,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "500 Internal Server Error",
+              "originalRequest": {},
+              "status": "Internal Server Error",
+              "code": 500,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "503 Service Overloaded",
+              "originalRequest": {},
+              "status": "Service Overloaded",
+              "code": 503,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            }
+          ]
+        },
+        {
+          "name": "Get Status",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "api-subscription-key",
+                "value": "{{api_key}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/speech-to-text/job/v1/{{job_id}}/status",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "speech-to-text",
+                "job",
+                "v1",
+                "{job_id}",
+                "status"
+              ]
+            },
+            "description": "Retrieve the current status and details of a speech to text bulk job, including progress and file-level information.\n\n**Rate Limiting Best Practice:** To prevent rate limit errors and ensure optimal server performance, we recommend implementing a minimum 5-millisecond delay between consecutive status polling requests. This helps maintain system stability while still providing timely status updates.\n\nSource: https://docs.sarvam.ai/api-reference/speech-to-text/stt/job/status"
+          },
+          "response": [
+            {
+              "name": "200 Successful Response",
+              "originalRequest": {},
+              "status": "Successful Response",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"job_state\": \"Running\",\n  \"created_at\": \"2024-06-10T09:15:30Z\",\n  \"updated_at\": \"2024-06-10T10:45:00Z\",\n  \"job_id\": \"a1b2c3d4-e5f6-7890-abcd-ef1234567890\",\n  \"storage_container_type\": \"Azure\",\n  \"total_files\": 12,\n  \"successful_files_count\": 8,\n  \"failed_files_count\": 1,\n  \"error_message\": \"\",\n  \"job_details\": [\n    {\n      \"inputs\": [\n        {\n          \"file_name\": \"meeting_recording_01.wav\",\n          \"file_id\": \"file-00123\"\n        }\n      ],\n      \"outputs\": [\n        {\n          \"file_name\": \"meeting_recording_01_transcript.json\",\n          \"file_id\": \"file-00123-out\"\n        }\n      ],\n      \"state\": \"Success\",\n      \"error_message\": null,\n      \"exception_name\": null\n    },\n    {\n      \"inputs\": [\n        {\n          \"file_name\": \"interview_session_02.mp3\",\n          \"file_id\": \"file-00124\"\n        }\n      ],\n      \"outputs\": [\n        {\n          \"file_name\": \"interview_session_02_transcript.json\",\n          \"file_id\": \"file-00124-out\"\n        }\n      ],\n      \"state\": \"API Error\",\n      \"error_message\": \"Timeout while processing audio file\",\n      \"exception_name\": \"TimeoutException\"\n    }\n  ]\n}"
+            },
+            {
+              "name": "400 Bad Request",
+              "originalRequest": {},
+              "status": "Bad Request",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "403 Forbidden",
+              "originalRequest": {},
+              "status": "Forbidden",
+              "code": 403,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "422 Unprocessable Entity",
+              "originalRequest": {},
+              "status": "Unprocessable Entity",
+              "code": 422,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "429 Quota Exceeded",
+              "originalRequest": {},
+              "status": "Quota Exceeded",
+              "code": 429,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "500 Internal Server Error",
+              "originalRequest": {},
+              "status": "Internal Server Error",
+              "code": 500,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "503 Service Overloaded",
+              "originalRequest": {},
+              "status": "Service Overloaded",
+              "code": 503,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            }
+          ]
+        },
+        {
+          "name": "Download Results",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "api-subscription-key",
+                "value": "{{api_key}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/speech-to-text/job/v1/download-files",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "speech-to-text",
+                "job",
+                "v1",
+                "download-files"
+              ]
+            },
+            "description": "Generate presigned download URLs for the transcription output files of a completed speech to text bulk job.\n\n**Required body fields:** `job_id` and `files` (array of output filenames such as `\"0.json\"`). Obtain filenames from the job status response (`job_details[].outputs[].file_name`) after the job reaches `Completed` or `PartiallyCompleted`.\n\n**Method:** POST only (GET returns 405).\n\nSource: https://docs.sarvam.ai/api-reference/speech-to-text/stt/job/download",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"job_id\": \"3fa85f64-5717-4562-b3fc-2c963f66afa6\",\n  \"files\": [\n    \"0.json\",\n    \"1.json\"\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "name": "200 Successful Response",
+              "originalRequest": {},
+              "status": "Successful Response",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"job_id\": \"3fa85f64-5717-4562-b3fc-2c963f66afa6\",\n  \"job_state\": \"Completed\",\n  \"download_urls\": {},\n  \"storage_container_type\": \"Azure\"\n}"
+            },
+            {
+              "name": "400 Bad Request",
+              "originalRequest": {},
+              "status": "Bad Request",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "403 Forbidden",
+              "originalRequest": {},
+              "status": "Forbidden",
+              "code": 403,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "422 Unprocessable Entity",
+              "originalRequest": {},
+              "status": "Unprocessable Entity",
+              "code": 422,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "429 Quota Exceeded",
+              "originalRequest": {},
+              "status": "Quota Exceeded",
+              "code": 429,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "500 Internal Server Error",
+              "originalRequest": {},
+              "status": "Internal Server Error",
+              "code": 500,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "503 Service Overloaded",
+              "originalRequest": {},
+              "status": "Service Overloaded",
+              "code": 503,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Speech to Text Translate (Legacy)",
+      "item": [
+        {
+          "name": "REST",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "api-subscription-key",
+                "value": "{{api_key}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/speech-to-text-translate",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "speech-to-text-translate"
+              ]
+            },
+            "description": "## Speech to Text Translation API\n\nThis API automatically detects the input language, transcribes the speech, and translates the text to English.\n\n### Available Options:\n- **REST API** (Current Endpoint): For quick responses under 30 seconds with immediate results\n- **Batch API**: For longer audio files [Follow this documentation](https://docs.sarvam.ai/api-reference-docs/api-guides-tutorials/speech-to-text/batch-api)\n  - Supports diarization (speaker identification)\n\n### Note:\n- Pricing differs for REST and Batch APIs\n- Diarization is only available in Batch API with separate pricing\n- Please refer to [here](https://docs.sarvam.ai/api-reference-docs/pricing) for detailed pricing information\n\nSource: https://docs.sarvam.ai/api-reference/speech-to-text-translate/translate",
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": "{{audio_file}}",
+                  "description": "The audio file to transcribe. Supported formats include WAV, MP3, AAC, AIFF, OGG, OPUS, FLAC, MP4/M4A, AMR, WMA, WebM, and PCM formats. The API automatically detects most codec formats, but for PCM files (pcm_s16le, pcm_l16, pcm_raw), you must specify the input_audio_codec parameter. PCM files are supported only at 16kHz sample rate.\nWorks best at 16kHz. Multiple channels will be merged."
+                },
+                {
+                  "key": "prompt",
+                  "type": "text",
+                  "src": "",
+                  "description": "Conversation context can be passed as a prompt to boost model accuracy. However, the current system is at an experimentation stage and doesn't match the prompt performance of large language models."
+                },
+                {
+                  "key": "model",
+                  "type": "text",
+                  "src": "",
+                  "description": "Model to be used for speech to text translation.\n\n- **saaras:v2.5** (default): Translation model that translates audio from any spoken Indic language to English.\n  - Example: Hindi audio → English text output\n\nFor the latest model (saaras:v3), use the `/speech-to-text` endpoint with `mode=\"translate\"`."
+                },
+                {
+                  "key": "input_audio_codec",
+                  "type": "text",
+                  "src": "",
+                  "description": "Audio codec/format of the input file. Our API automatically detects all codec formats, but for PCM files specifically (pcm_s16le, pcm_l16, pcm_raw), you must pass this parameter. PCM files are supported only at 16kHz sample rate."
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "200 Successful Response",
+              "originalRequest": {},
+              "status": "Successful Response",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"request_id\": \"20240615_1f2e3d4c-5678-90ab-cdef-1234567890ab\",\n  \"transcript\": \"Good morning, everyone. Let's begin the meeting.\",\n  \"language_code\": \"en-IN\",\n  \"diarized_transcript\": {\n    \"entries\": [\n      {\n        \"transcript\": \"Good morning, everyone.\",\n        \"start_time_seconds\": 0,\n        \"end_time_seconds\": 3.2,\n        \"speaker_id\": \"speaker_1\"\n      },\n      {\n        \"transcript\": \"Let's begin the meeting.\",\n        \"start_time_seconds\": 3.3,\n        \"end_time_seconds\": 6,\n        \"speaker_id\": \"speaker_2\"\n      }\n    ]\n  },\n  \"language_probability\": 0.98\n}"
+            },
+            {
+              "name": "400 Bad Request",
+              "originalRequest": {},
+              "status": "Bad Request",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "403 Forbidden",
+              "originalRequest": {},
+              "status": "Forbidden",
+              "code": 403,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "422 Unprocessable Entity",
+              "originalRequest": {},
+              "status": "Unprocessable Entity",
+              "code": 422,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "429 Quota Exceeded",
+              "originalRequest": {},
+              "status": "Quota Exceeded",
+              "code": 429,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "500 Internal Server Error",
+              "originalRequest": {},
+              "status": "Internal Server Error",
+              "code": 500,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "503 Service Overloaded",
+              "originalRequest": {},
+              "status": "Service Overloaded",
+              "code": 503,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            }
+          ]
+        },
+        {
+          "name": "WebSocket",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Api-Subscription-Key",
+                "value": "{{api_key}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{wsBaseUrl}}/speech-to-text-translate/ws",
+              "host": [
+                "{{wsBaseUrl}}"
+              ],
+              "path": [
+                "speech-to-text-translate",
+                "ws"
+              ],
+              "query": [
+                {
+                  "key": "model",
+                  "value": "saaras:v2.5",
+                  "description": "",
+                  "disabled": false
+                },
+                {
+                  "key": "sample_rate",
+                  "value": "16000",
+                  "description": "",
+                  "disabled": false
+                },
+                {
+                  "key": "high_vad_sensitivity",
+                  "value": "",
+                  "description": "",
+                  "disabled": true
+                },
+                {
+                  "key": "positive_speech_threshold",
+                  "value": "0.7",
+                  "description": "",
+                  "disabled": false
+                },
+                {
+                  "key": "negative_speech_threshold",
+                  "value": "0.45",
+                  "description": "",
+                  "disabled": false
+                },
+                {
+                  "key": "min_speech_frames",
+                  "value": "2",
+                  "description": "",
+                  "disabled": false
+                },
+                {
+                  "key": "first_turn_min_speech_frames",
+                  "value": "8",
+                  "description": "",
+                  "disabled": false
+                },
+                {
+                  "key": "negative_frames_count",
+                  "value": "18",
+                  "description": "",
+                  "disabled": false
+                },
+                {
+                  "key": "negative_frames_window",
+                  "value": "24",
+                  "description": "",
+                  "disabled": false
+                },
+                {
+                  "key": "start_speech_volume_threshold",
+                  "value": "",
+                  "description": "",
+                  "disabled": true
+                },
+                {
+                  "key": "interrupt_min_speech_frames",
+                  "value": "2",
+                  "description": "",
+                  "disabled": false
+                },
+                {
+                  "key": "pre_speech_pad_frames",
+                  "value": "9",
+                  "description": "",
+                  "disabled": false
+                },
+                {
+                  "key": "num_initial_ignored_frames",
+                  "value": "0",
+                  "description": "",
+                  "disabled": false
+                },
+                {
+                  "key": "vad_signals",
+                  "value": "",
+                  "description": "",
+                  "disabled": true
+                },
+                {
+                  "key": "flush_signal",
+                  "value": "",
+                  "description": "",
+                  "disabled": true
+                },
+                {
+                  "key": "input_audio_codec",
+                  "value": "",
+                  "description": "",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "WebSocket channel for real-time speech to text streaming with English translation.\n\n**Note:** This API Reference page is provided for informational purposes only. \nThe Try It playground may not provide the best experience for streaming audio. \nFor optimal streaming performance, please use the SDK or implement your own WebSocket client.\n\nThis is a WebSocket endpoint. Import the collection, then open this endpoint in Postman's WebSocket client and set the `Api-Subscription-Key` connection header.\n\nSource: https://docs.sarvam.ai/api-reference/speech-to-text-translate/translate/ws"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Speech to Text Translate (Legacy) / Batch",
+      "item": [
+        {
+          "name": "Initiate Job",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "api-subscription-key",
+                "value": "{{api_key}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/speech-to-text-translate/job/v1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "speech-to-text-translate",
+                "job",
+                "v1"
+              ],
+              "query": [
+                {
+                  "key": "ptu_id",
+                  "value": "",
+                  "description": "",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Create a new speech to text translate bulk job and receive a job UUID and storage folder details for processing multiple audio files with translation. Set `job_parameters.input_audio_codec` when uploads are raw PCM (`pcm_s16le`, `pcm_l16`, or `pcm_raw`); the API auto-detects other formats. PCM must be 16 kHz.\n\nSource: https://docs.sarvam.ai/api-reference/speech-to-text-translate/stt-translate/job/initiate",
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "name": "202 Successful Response",
+              "originalRequest": {},
+              "status": "Successful Response",
+              "code": 202,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"job_id\": \"job_9f8b7c6d5e4a3b2c1d0e\",\n  \"storage_container_type\": \"Azure_V1\",\n  \"job_parameters\": {},\n  \"job_state\": \"Accepted\"\n}"
+            },
+            {
+              "name": "400 Bad Request",
+              "originalRequest": {},
+              "status": "Bad Request",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "403 Forbidden",
+              "originalRequest": {},
+              "status": "Forbidden",
+              "code": 403,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "422 Unprocessable Entity",
+              "originalRequest": {},
+              "status": "Unprocessable Entity",
+              "code": 422,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "429 Quota Exceeded",
+              "originalRequest": {},
+              "status": "Quota Exceeded",
+              "code": 429,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "500 Internal Server Error",
+              "originalRequest": {},
+              "status": "Internal Server Error",
+              "code": 500,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "503 Service Overloaded",
+              "originalRequest": {},
+              "status": "Service Overloaded",
+              "code": 503,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            }
+          ]
+        },
+        {
+          "name": "Upload Files",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "api-subscription-key",
+                "value": "{{api_key}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/speech-to-text-translate/job/v1/upload-files",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "speech-to-text-translate",
+                "job",
+                "v1",
+                "upload-files"
+              ],
+              "query": [
+                {
+                  "key": "ptu_id",
+                  "value": "",
+                  "description": "",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Generate presigned upload URLs for audio files that will be processed in a speech to text translate bulk job\n\nSource: https://docs.sarvam.ai/api-reference/speech-to-text-translate/stt-translate/job/upload",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"job_id\": \"3fa85f64-5717-4562-b3fc-2c963f66afa6\",\n  \"files\": [\n    \"audio_segment_01.wav\",\n    \"audio_segment_02.wav\"\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "name": "200 Successful Response",
+              "originalRequest": {},
+              "status": "Successful Response",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"job_id\": \"3fa85f64-5717-4562-b3fc-2c963f66afa6\",\n  \"job_state\": \"Accepted\",\n  \"upload_urls\": {},\n  \"storage_container_type\": \"Azure\"\n}"
+            },
+            {
+              "name": "400 Bad Request",
+              "originalRequest": {},
+              "status": "Bad Request",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "403 Forbidden",
+              "originalRequest": {},
+              "status": "Forbidden",
+              "code": 403,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "422 Unprocessable Entity",
+              "originalRequest": {},
+              "status": "Unprocessable Entity",
+              "code": 422,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "429 Quota Exceeded",
+              "originalRequest": {},
+              "status": "Quota Exceeded",
+              "code": 429,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "500 Internal Server Error",
+              "originalRequest": {},
+              "status": "Internal Server Error",
+              "code": 500,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "503 Service Overloaded",
+              "originalRequest": {},
+              "status": "Service Overloaded",
+              "code": 503,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            }
+          ]
+        },
+        {
+          "name": "Start Job",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "api-subscription-key",
+                "value": "{{api_key}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/speech-to-text-translate/job/v1/{{job_id}}/start",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "speech-to-text-translate",
+                "job",
+                "v1",
+                "{job_id}",
+                "start"
+              ],
+              "query": [
+                {
+                  "key": "ptu_id",
+                  "value": "",
+                  "description": "",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Start processing a speech to text translate bulk job after all audio files have been uploaded\n\nSource: https://docs.sarvam.ai/api-reference/speech-to-text-translate/stt-translate/job/start"
+          },
+          "response": [
+            {
+              "name": "200 Successful Response",
+              "originalRequest": {},
+              "status": "Successful Response",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"job_state\": \"Accepted\",\n  \"created_at\": \"2024-06-10T09:15:00Z\",\n  \"updated_at\": \"2024-06-10T09:15:05Z\",\n  \"job_id\": \"a1b2c3d4-e5f6-7890-ab12-cd34ef567890\",\n  \"storage_container_type\": \"Azure\",\n  \"total_files\": 12,\n  \"successful_files_count\": 0,\n  \"failed_files_count\": 0,\n  \"error_message\": \"\",\n  \"job_details\": [\n    {\n      \"inputs\": [\n        {\n          \"file_name\": \"meeting_recording_01.wav\",\n          \"file_id\": \"file-1234567890abcdef\"\n        }\n      ],\n      \"outputs\": [\n        {\n          \"file_name\": \"meeting_recording_01_transcript.txt\",\n          \"file_id\": \"file-abcdef1234567890\"\n        }\n      ],\n      \"state\": \"Success\",\n      \"error_message\": null,\n      \"exception_name\": null\n    }\n  ]\n}"
+            },
+            {
+              "name": "400 Bad Request",
+              "originalRequest": {},
+              "status": "Bad Request",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "403 Forbidden",
+              "originalRequest": {},
+              "status": "Forbidden",
+              "code": 403,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "422 Unprocessable Entity",
+              "originalRequest": {},
+              "status": "Unprocessable Entity",
+              "code": 422,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "429 Quota Exceeded",
+              "originalRequest": {},
+              "status": "Quota Exceeded",
+              "code": 429,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "500 Internal Server Error",
+              "originalRequest": {},
+              "status": "Internal Server Error",
+              "code": 500,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "503 Service Overloaded",
+              "originalRequest": {},
+              "status": "Service Overloaded",
+              "code": 503,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            }
+          ]
+        },
+        {
+          "name": "Get Status",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "api-subscription-key",
+                "value": "{{api_key}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/speech-to-text-translate/job/v1/{{job_id}}/status",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "speech-to-text-translate",
+                "job",
+                "v1",
+                "{job_id}",
+                "status"
+              ]
+            },
+            "description": "Retrieve the current status and details of a speech to text translate bulk job, including progress and file-level information.\n\n**Rate Limiting Best Practice:** To prevent rate limit errors and ensure optimal server performance, we recommend implementing a minimum 5-millisecond delay between consecutive status polling requests. This helps maintain system stability while still providing timely status updates.\n\nSource: https://docs.sarvam.ai/api-reference/speech-to-text-translate/stt-translate/job/status"
+          },
+          "response": [
+            {
+              "name": "200 Successful Response",
+              "originalRequest": {},
+              "status": "Successful Response",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"job_state\": \"Running\",\n  \"created_at\": \"2024-06-10T09:15:30Z\",\n  \"updated_at\": \"2024-06-10T09:45:00Z\",\n  \"job_id\": \"a3f1c9d2-7b4e-4f8a-9c2d-1e5b7f8a1234\",\n  \"storage_container_type\": \"Azure\",\n  \"total_files\": 5,\n  \"successful_files_count\": 3,\n  \"failed_files_count\": 1,\n  \"error_message\": \"\",\n  \"job_details\": [\n    {\n      \"inputs\": [\n        {\n          \"file_name\": \"meeting_recording_01.wav\",\n          \"file_id\": \"file-001\"\n        }\n      ],\n      \"outputs\": [\n        {\n          \"file_name\": \"meeting_recording_01_transcript.txt\",\n          \"file_id\": \"file-001-out\"\n        }\n      ],\n      \"state\": \"Success\",\n      \"error_message\": null,\n      \"exception_name\": null\n    },\n    {\n      \"inputs\": [\n        {\n          \"file_name\": \"interview_session_02.mp3\",\n          \"file_id\": \"file-002\"\n        }\n      ],\n      \"outputs\": [\n        {\n          \"file_name\": \"interview_session_02_transcript.txt\",\n          \"file_id\": \"file-002-out\"\n        }\n      ],\n      \"state\": \"Success\",\n      \"error_message\": null,\n      \"exception_name\": null\n    },\n    {\n      \"inputs\": [\n        {\n          \"file_name\": \"conference_call_03.wav\",\n          \"file_id\": \"file-003\"\n        }\n      ],\n      \"outputs\": [\n        {\n          \"file_name\": \"conference_call_03_transcript.txt\",\n          \"file_id\": \"file-003-out\"\n        }\n      ],\n      \"state\": \"API Error\",\n      \"error_message\": \"Audio format not supported\",\n      \"exception_name\": \"UnsupportedAudioFormatException\"\n    }\n  ]\n}"
+            },
+            {
+              "name": "400 Bad Request",
+              "originalRequest": {},
+              "status": "Bad Request",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "403 Forbidden",
+              "originalRequest": {},
+              "status": "Forbidden",
+              "code": 403,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "422 Unprocessable Entity",
+              "originalRequest": {},
+              "status": "Unprocessable Entity",
+              "code": 422,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "429 Quota Exceeded",
+              "originalRequest": {},
+              "status": "Quota Exceeded",
+              "code": 429,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "500 Internal Server Error",
+              "originalRequest": {},
+              "status": "Internal Server Error",
+              "code": 500,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "503 Service Overloaded",
+              "originalRequest": {},
+              "status": "Service Overloaded",
+              "code": 503,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            }
+          ]
+        },
+        {
+          "name": "Download Results",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "api-subscription-key",
+                "value": "{{api_key}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/speech-to-text-translate/job/v1/download-files",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "speech-to-text-translate",
+                "job",
+                "v1",
+                "download-files"
+              ],
+              "query": [
+                {
+                  "key": "ptu_id",
+                  "value": "",
+                  "description": "",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Generate presigned download URLs for the translated transcription output files of a completed speech to text translate bulk job.\n\n**Required body fields:** `job_id` and `files` (array of output filenames such as `\"0.json\"`). Obtain filenames from the job status response after the job completes.\n\n**Method:** POST only (GET returns 405).\n\nSource: https://docs.sarvam.ai/api-reference/speech-to-text-translate/stt-translate/job/download",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"job_id\": \"3fa85f64-5717-4562-b3fc-2c963f66afa6\",\n  \"files\": [\n    \"0.json\",\n    \"1.json\"\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "name": "200 Successful Response",
+              "originalRequest": {},
+              "status": "Successful Response",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"job_id\": \"3fa85f64-5717-4562-b3fc-2c963f66afa6\",\n  \"job_state\": \"Completed\",\n  \"download_urls\": {},\n  \"storage_container_type\": \"Azure\"\n}"
+            },
+            {
+              "name": "400 Bad Request",
+              "originalRequest": {},
+              "status": "Bad Request",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "403 Forbidden",
+              "originalRequest": {},
+              "status": "Forbidden",
+              "code": 403,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "422 Unprocessable Entity",
+              "originalRequest": {},
+              "status": "Unprocessable Entity",
+              "code": 422,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "429 Quota Exceeded",
+              "originalRequest": {},
+              "status": "Quota Exceeded",
+              "code": 429,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "500 Internal Server Error",
+              "originalRequest": {},
+              "status": "Internal Server Error",
+              "code": 500,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "503 Service Overloaded",
+              "originalRequest": {},
+              "status": "Service Overloaded",
+              "code": 503,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Text to Speech",
+      "item": [
+        {
+          "name": "REST",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "api-subscription-key",
+                "value": "{{api_key}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/text-to-speech",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "text-to-speech"
+              ]
+            },
+            "description": "Convert text into spoken audio. The output is a base64-encoded audio string that must be decoded before use.\n\n**Available Models:**\n- **bulbul:v3**: Latest model with improved quality, 30+ voices, and temperature control\n- **bulbul:v2**: Legacy model with pitch and loudness controls\n\n**Important Notes for bulbul:v3:**\n- Pitch and loudness parameters are NOT supported\n- Pace range: 0.5 to 2.0\n- Preprocessing is automatically enabled\n- Default sample rate is 24000 Hz\n- Supports sample rates: 8000, 16000, 22050, 24000 Hz (REST API also supports 32000, 44100, 48000 Hz)\n\nSource: https://docs.sarvam.ai/api-reference/text-to-speech/convert",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"text\": \"Hello, welcome to Sarvam AI's text-to-speech service. This is a sample conversion in Bengali.\",\n  \"target_language_code\": \"bn-IN\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "name": "200 Successful Response",
+              "originalRequest": {},
+              "status": "Successful Response",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"request_id\": \"a1b2c3d4-e5f6-7890-ab12-cd34ef567890\",\n  \"audios\": [\n    \"UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAIA+AAACABAAZGF0YQAAAAA=\"\n  ]\n}"
+            },
+            {
+              "name": "400 Bad Request",
+              "originalRequest": {},
+              "status": "Bad Request",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "403 Forbidden",
+              "originalRequest": {},
+              "status": "Forbidden",
+              "code": 403,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "422 Unprocessable Entity",
+              "originalRequest": {},
+              "status": "Unprocessable Entity",
+              "code": 422,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "429 Quota Exceeded",
+              "originalRequest": {},
+              "status": "Quota Exceeded",
+              "code": 429,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "500 Internal Server Error",
+              "originalRequest": {},
+              "status": "Internal Server Error",
+              "code": 500,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            }
+          ]
+        },
+        {
+          "name": "REST Stream",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "api-subscription-key",
+                "value": "{{api_key}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/text-to-speech/stream",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "text-to-speech",
+                "stream"
+              ]
+            },
+            "description": "Converts the input text into a streamed spoken audio response.\n\nThis endpoint supports streaming audio using the specified output codec (e.g., `audio/mpeg` for MP3). The response is returned as a binary audio stream, which can be played or saved directly by the client.\n\nSupports the `dict_id` parameter to apply a [pronunciation dictionary](https://docs.sarvam.ai/api-reference-docs/pronunciation-dictionary/create) during synthesis.\n\nSource: https://docs.sarvam.ai/api-reference/text-to-speech/convert-stream",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"text\": \"Hello, welcome to Sarvam AI's text-to-speech service!\",\n  \"target_language_code\": \"en-IN\",\n  \"speaker\": \"shubh\",\n  \"pitch\": 0,\n  \"pace\": 1.2,\n  \"loudness\": 1,\n  \"speech_sample_rate\": 22050,\n  \"enable_preprocessing\": false,\n  \"model\": \"bulbul:v3\",\n  \"temperature\": 0.6,\n  \"enable_cached_responses\": false,\n  \"dict_id\": \"dct_1234567890abcdef\",\n  \"output_audio_codec\": \"mp3\",\n  \"output_audio_bitrate\": \"128k\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "name": "200 Success. Returns a streamed audio response in the requested format (e.g., `audio/mpeg` for MP3, `audio/wav` for WAV).",
+              "originalRequest": {},
+              "status": "Success. Returns a streamed audio response in the requested format (e.g., `audio/mpeg` for MP3, `audio/wav` for WAV).",
+              "code": 200,
+              "_postman_previewlanguage": "text",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/octet-stream"
+                }
+              ],
+              "cookie": [],
+              "body": "binary audio stream"
+            },
+            {
+              "name": "400 Bad Request",
+              "originalRequest": {},
+              "status": "Bad Request",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "403 Forbidden",
+              "originalRequest": {},
+              "status": "Forbidden",
+              "code": 403,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "422 Unprocessable Entity",
+              "originalRequest": {},
+              "status": "Unprocessable Entity",
+              "code": 422,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "429 Quota Exceeded",
+              "originalRequest": {},
+              "status": "Quota Exceeded",
+              "code": 429,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "500 Internal Server Error",
+              "originalRequest": {},
+              "status": "Internal Server Error",
+              "code": 500,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            }
+          ]
+        },
+        {
+          "name": "WebSocket",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Api-Subscription-Key",
+                "value": "{{api_key}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{wsBaseUrl}}/text-to-speech/ws",
+              "host": [
+                "{{wsBaseUrl}}"
+              ],
+              "path": [
+                "text-to-speech",
+                "ws"
+              ],
+              "query": [
+                {
+                  "key": "model",
+                  "value": "bulbul:v2",
+                  "description": "",
+                  "disabled": false
+                },
+                {
+                  "key": "send_completion_event",
+                  "value": "true",
+                  "description": "",
+                  "disabled": false
+                }
+              ]
+            },
+            "description": "WebSocket channel for real-time TTS synthesis.\n\n**Note:** This API Reference page is provided for informational purposes only. \nThe Try It playground may not provide the best experience for streaming audio. \nFor optimal streaming performance, please use the SDK or implement your own WebSocket client.\n\n**Model-Specific Notes:**\n- **bulbul:v2:** Supports pitch, loudness, pace (0.3-3.0). Default sample rate: 22050 Hz.\n- **bulbul:v3:** Does NOT support pitch/loudness. Pace range: 0.5-2.0. Supports temperature parameter. Default sample rate: 24000 Hz. Preprocessing is always enabled.\n\nThis is a WebSocket endpoint. Import the collection, then open this endpoint in Postman's WebSocket client and set the `Api-Subscription-Key` connection header.\n\nSource: https://docs.sarvam.ai/api-reference/text-to-speech/stream"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Pronunciation Dictionary",
+      "item": [
+        {
+          "name": "Create",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "api-subscription-key",
+                "value": "{{api_key}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/text-to-speech/pronunciation-dictionary",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "text-to-speech",
+                "pronunciation-dictionary"
+              ]
+            },
+            "description": "Upload a `.json` file to create a new pronunciation dictionary. Only supported by **bulbul:v3**.\n\nThe file should contain a JSON object with a `pronunciations` key mapping language codes to word-pronunciation pairs. See the [Pronunciation Dictionary guide](/api-reference-docs/api-guides-tutorials/text-to-speech/pronunciation-dictionary) for format details and examples.\n\nThe returned `dictionary_id` can be passed as `dict_id` in text-to-speech requests (REST, HTTP Stream, and WebSocket).\n\n**Limits:** Max 10 dictionaries per user, 100 words per dictionary, 1 MB file size.\n\nSource: https://docs.sarvam.ai/api-reference/pronunciation-dictionary/create",
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": "{{audio_file}}",
+                  "description": ""
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "200 Successful Response",
+              "originalRequest": {},
+              "status": "Successful Response",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"dictionary_id\": \"p_9f8a3b2c\"\n}"
+            },
+            {
+              "name": "400 Bad Request — Invalid JSON, missing required fields, or bad schema.",
+              "originalRequest": {},
+              "status": "Bad Request — Invalid JSON, missing required fields, or bad schema.",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "403 Forbidden",
+              "originalRequest": {},
+              "status": "Forbidden",
+              "code": 403,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "413 Payload Too Large — File size exceeds the 1 MB limit.",
+              "originalRequest": {},
+              "status": "Payload Too Large — File size exceeds the 1 MB limit.",
+              "code": 413,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "422 Unprocessable Entity — Word limit exceeded (>100 words per dictionary) or dictionary limit exceeded (>10 dictionaries per user).",
+              "originalRequest": {},
+              "status": "Unprocessable Entity — Word limit exceeded (>100 words per dictionary) or dictionary limit exceeded (>10 dictionaries per user).",
+              "code": 422,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "429 Quota Exceeded",
+              "originalRequest": {},
+              "status": "Quota Exceeded",
+              "code": 429,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "500 Internal Server Error",
+              "originalRequest": {},
+              "status": "Internal Server Error",
+              "code": 500,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            }
+          ]
+        },
+        {
+          "name": "List",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "api-subscription-key",
+                "value": "{{api_key}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/text-to-speech/pronunciation-dictionary",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "text-to-speech",
+                "pronunciation-dictionary"
+              ]
+            },
+            "description": "Retrieve a list of all pronunciation dictionary IDs associated with the authenticated user.\n\nSource: https://docs.sarvam.ai/api-reference/pronunciation-dictionary/list"
+          },
+          "response": [
+            {
+              "name": "200 Successful Response",
+              "originalRequest": {},
+              "status": "Successful Response",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"dictionary_count\": 2,\n  \"dictionaries\": [\n    \"p_5cb7faa6\",\n    \"p_66671321\"\n  ]\n}"
+            },
+            {
+              "name": "400 Bad Request — Invalid JSON, missing required fields, or bad schema.",
+              "originalRequest": {},
+              "status": "Bad Request — Invalid JSON, missing required fields, or bad schema.",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "403 Forbidden",
+              "originalRequest": {},
+              "status": "Forbidden",
+              "code": 403,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "422 Unprocessable Entity",
+              "originalRequest": {},
+              "status": "Unprocessable Entity",
+              "code": 422,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "429 Quota Exceeded",
+              "originalRequest": {},
+              "status": "Quota Exceeded",
+              "code": 429,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "500 Internal Server Error",
+              "originalRequest": {},
+              "status": "Internal Server Error",
+              "code": 500,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            }
+          ]
+        },
+        {
+          "name": "Get",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "api-subscription-key",
+                "value": "{{api_key}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/text-to-speech/pronunciation-dictionary/{{dict_id}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "text-to-speech",
+                "pronunciation-dictionary",
+                "{dict_id}"
+              ]
+            },
+            "description": "Retrieve the full pronunciation mappings for a specific dictionary by its ID.\n\nReturns the pronunciation data organized by language code, where each language contains word-to-pronunciation pairs.\n\nSource: https://docs.sarvam.ai/api-reference/pronunciation-dictionary/get"
+          },
+          "response": [
+            {
+              "name": "200 Successful Response",
+              "originalRequest": {},
+              "status": "Successful Response",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"pronunciations\": {\n    \"hi-IN\": {\n      \"B2B\": \"B to B\",\n      \"my name\": \"mera naam\"\n    },\n    \"en-IN\": {\n      \"teting\": \"testing\"\n    }\n  }\n}"
+            },
+            {
+              "name": "400 Bad Request — Invalid JSON, missing required fields, or bad schema.",
+              "originalRequest": {},
+              "status": "Bad Request — Invalid JSON, missing required fields, or bad schema.",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "403 Forbidden",
+              "originalRequest": {},
+              "status": "Forbidden",
+              "code": 403,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "404 Not Found — Dictionary not found.",
+              "originalRequest": {},
+              "status": "Not Found — Dictionary not found.",
+              "code": 404,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "422 Unprocessable Entity",
+              "originalRequest": {},
+              "status": "Unprocessable Entity",
+              "code": 422,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "429 Quota Exceeded",
+              "originalRequest": {},
+              "status": "Quota Exceeded",
+              "code": 429,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "500 Internal Server Error",
+              "originalRequest": {},
+              "status": "Internal Server Error",
+              "code": 500,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            }
+          ]
+        },
+        {
+          "name": "Update",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "api-subscription-key",
+                "value": "{{api_key}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/text-to-speech/pronunciation-dictionary",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "text-to-speech",
+                "pronunciation-dictionary"
+              ],
+              "query": [
+                {
+                  "key": "dict_id",
+                  "value": "",
+                  "description": "ID of the dictionary to update",
+                  "disabled": false
+                }
+              ]
+            },
+            "description": "Update an existing pronunciation dictionary by uploading a JSON file. You can add new words, change existing pronunciations, or both — entries not included in the uploaded file remain unchanged.\n\n**Limits:** Max 100 words per dictionary, 1 MB file size.\n\nThe response includes the `dictionary_id` and the updated pronunciation mappings for verification.\n\nSource: https://docs.sarvam.ai/api-reference/pronunciation-dictionary/update",
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": "{{audio_file}}",
+                  "description": ""
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "200 Successful Response",
+              "originalRequest": {},
+              "status": "Successful Response",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"dictionary_id\": \"p_5cb7faa6\",\n  \"updated_pronunciations\": {\n    \"hi-IN\": {\n      \"B2B\": \"business to business\"\n    },\n    \"en-IN\": {\n      \"teting\": \"testing\"\n    }\n  }\n}"
+            },
+            {
+              "name": "400 Bad Request — Invalid JSON, missing required fields, or bad schema.",
+              "originalRequest": {},
+              "status": "Bad Request — Invalid JSON, missing required fields, or bad schema.",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "403 Forbidden",
+              "originalRequest": {},
+              "status": "Forbidden",
+              "code": 403,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "404 Not Found — Dictionary not found.",
+              "originalRequest": {},
+              "status": "Not Found — Dictionary not found.",
+              "code": 404,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "413 Payload Too Large — File size exceeds the 1 MB limit.",
+              "originalRequest": {},
+              "status": "Payload Too Large — File size exceeds the 1 MB limit.",
+              "code": 413,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "422 Unprocessable Entity — Word limit exceeded (>100 words per dictionary).",
+              "originalRequest": {},
+              "status": "Unprocessable Entity — Word limit exceeded (>100 words per dictionary).",
+              "code": 422,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "429 Quota Exceeded",
+              "originalRequest": {},
+              "status": "Quota Exceeded",
+              "code": 429,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "500 Internal Server Error",
+              "originalRequest": {},
+              "status": "Internal Server Error",
+              "code": 500,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            }
+          ]
+        },
+        {
+          "name": "Delete",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "api-subscription-key",
+                "value": "{{api_key}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/text-to-speech/pronunciation-dictionary",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "text-to-speech",
+                "pronunciation-dictionary"
+              ],
+              "query": [
+                {
+                  "key": "dict_id",
+                  "value": "",
+                  "description": "ID of the dictionary to delete",
+                  "disabled": false
+                }
+              ]
+            },
+            "description": "Delete a pronunciation dictionary by its ID. Once deleted, the dictionary can no longer be referenced in text-to-speech requests.\n\nSource: https://docs.sarvam.ai/api-reference/pronunciation-dictionary/delete"
+          },
+          "response": [
+            {
+              "name": "200 Successful Response",
+              "originalRequest": {},
+              "status": "Successful Response",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"success\": true,\n  \"message\": \"Dictionary 'dict_9f8b7c6a' deleted successfully\"\n}"
+            },
+            {
+              "name": "400 Bad Request — Invalid JSON, missing required fields, or bad schema.",
+              "originalRequest": {},
+              "status": "Bad Request — Invalid JSON, missing required fields, or bad schema.",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "403 Forbidden",
+              "originalRequest": {},
+              "status": "Forbidden",
+              "code": 403,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "404 Not Found — Dictionary not found.",
+              "originalRequest": {},
+              "status": "Not Found — Dictionary not found.",
+              "code": 404,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "422 Unprocessable Entity",
+              "originalRequest": {},
+              "status": "Unprocessable Entity",
+              "code": 422,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "429 Quota Exceeded",
+              "originalRequest": {},
+              "status": "Quota Exceeded",
+              "code": 429,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "500 Internal Server Error",
+              "originalRequest": {},
+              "status": "Internal Server Error",
+              "code": 500,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Text Processing",
+      "item": [
+        {
+          "name": "Translation",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "api-subscription-key",
+                "value": "{{api_key}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/translate",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "translate"
+              ]
+            },
+            "description": "**Translation** converts text from one language to another while preserving its meaning.\nFor Example: **'मैं ऑफिस जा रहा हूँ'** translates to **'I am going to the office'** in English, where the script and language change, but the original meaning remains the same.\n\nAvailable languages:\n- **`bn-IN`**: Bengali\n- **`en-IN`**: English\n- **`gu-IN`**: Gujarati\n- **`hi-IN`**: Hindi\n- **`kn-IN`**: Kannada\n- **`ml-IN`**: Malayalam\n- **`mr-IN`**: Marathi\n- **`od-IN`**: Odia\n- **`pa-IN`**: Punjabi\n- **`ta-IN`**: Tamil\n- **`te-IN`**: Telugu\n\n### Newly added languages:\n- **`as-IN`**: Assamese\n- **`brx-IN`**: Bodo\n- **`doi-IN`**: Dogri\n- **`kok-IN`**: Konkani\n- **`ks-IN`**: Kashmiri\n- **`mai-IN`**: Maithili\n- **`mni-IN`**: Manipuri (Meiteilon)\n- **`ne-IN`**: Nepali\n- **`sa-IN`**: Sanskrit\n- **`sat-IN`**: Santali\n- **`sd-IN`**: Sindhi\n- **`ur-IN`**: Urdu\n\nFor hands-on practice, you can explore the notebook tutorial on [Translate API Tutorial](https://github.com/sarvamai/sarvam-ai-cookbook/blob/main/notebooks/translate/Translate_API_Tutorial.ipynb).\n\nSource: https://docs.sarvam.ai/api-reference/text/translate-text",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"input\": \"Hello, how are you doing today?\",\n  \"source_language_code\": \"auto\",\n  \"target_language_code\": \"bn-IN\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "name": "200 Successful Response",
+              "originalRequest": {},
+              "status": "Successful Response",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"request_id\": \"a1b2c3d4-e5f6-7890-ab12-cd34ef567890\",\n  \"translated_text\": \"হ্যালো, আপনি আজ কেমন আছেন?\",\n  \"source_language_code\": \"en-IN\"\n}"
+            },
+            {
+              "name": "400 Bad Request",
+              "originalRequest": {},
+              "status": "Bad Request",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "403 Forbidden",
+              "originalRequest": {},
+              "status": "Forbidden",
+              "code": 403,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "422 Unprocessable Entity",
+              "originalRequest": {},
+              "status": "Unprocessable Entity",
+              "code": 422,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "429 Quota Exceeded",
+              "originalRequest": {},
+              "status": "Quota Exceeded",
+              "code": 429,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "500 Internal Server Error",
+              "originalRequest": {},
+              "status": "Internal Server Error",
+              "code": 500,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            }
+          ]
+        },
+        {
+          "name": "Transliteration",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "api-subscription-key",
+                "value": "{{api_key}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/transliterate",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "transliterate"
+              ]
+            },
+            "description": "**Transliteration** converts text from one script to another while preserving the original pronunciation. For example, **'नमस्ते'** becomes **'namaste'** in English, and **'how are you'** can be written as **'हाउ आर यू'** in Devanagari. This process ensures that the sound of the original text remains intact, even when written in a different script.\n\nTransliteration is useful when you want to represent words phonetically across different writing systems, such as converting **'मैं ऑफिस जा रहा हूँ'** to **'main office ja raha hun'** in English letters.\n\n**Translation**, on the other hand, converts text from one language to another while preserving the meaning rather than pronunciation. For example, **'मैं ऑफिस जा रहा हूँ'** translates to **'I am going to the office'** in English, changing both the script and the language while conveying the intended message.\n### Examples of **Transliteration**:\n- **'Good morning'** becomes **'गुड मॉर्निंग'** in Hindi, where the pronunciation is preserved but the meaning is not translated.\n- **'सुप्रभात'** becomes **'suprabhat'** in English.\n\nAvailable languages:\n- **`en-IN`**: English\n- **`hi-IN`**: Hindi\n- **`bn-IN`**: Bengali\n- **`gu-IN`**: Gujarati\n- **`kn-IN`**: Kannada\n- **`ml-IN`**: Malayalam\n- **`mr-IN`**: Marathi\n- **`od-IN`**: Odia\n- **`pa-IN`**: Punjabi\n- **`ta-IN`**: Tamil\n- **`te-IN`**: Telugu\n\nFor hands-on practice, you can explore the notebook tutorial on [Transliterate API Tutorial](https://github.com/sarvamai/sarvam-ai-cookbook/blob/main/notebooks/transliterate/Transliterate_API_Tutorial.ipynb).\n\nSource: https://docs.sarvam.ai/api-reference/text/transliterate-text",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"input\": \"मैं ऑफिस जा रहा हूँ\",\n  \"source_language_code\": \"hi-IN\",\n  \"target_language_code\": \"en-IN\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "name": "200 Successful Response",
+              "originalRequest": {},
+              "status": "Successful Response",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"request_id\": \"a1b2c3d4-e5f6-7890-ab12-cd34ef567890\",\n  \"transliterated_text\": \"main office ja raha hun\",\n  \"source_language_code\": \"hi-IN\"\n}"
+            },
+            {
+              "name": "400 Bad Request",
+              "originalRequest": {},
+              "status": "Bad Request",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "403 Forbidden",
+              "originalRequest": {},
+              "status": "Forbidden",
+              "code": 403,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "422 Unprocessable Entity",
+              "originalRequest": {},
+              "status": "Unprocessable Entity",
+              "code": 422,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "429 Quota Exceeded",
+              "originalRequest": {},
+              "status": "Quota Exceeded",
+              "code": 429,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "500 Internal Server Error",
+              "originalRequest": {},
+              "status": "Internal Server Error",
+              "code": 500,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            }
+          ]
+        },
+        {
+          "name": "Language Detection",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "api-subscription-key",
+                "value": "{{api_key}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/text-lid",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "text-lid"
+              ]
+            },
+            "description": "Identifies the language (e.g., en-IN, hi-IN) and script (e.g., Latin, Devanagari) of the input text, supporting multiple languages.\n\nSource: https://docs.sarvam.ai/api-reference/text/identify-language",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"input\": \"यह एक उदाहरण वाक्य है जो हिंदी भाषा में लिखा गया है।\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "name": "200 Successful Response",
+              "originalRequest": {},
+              "status": "Successful Response",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"request_id\": \"a1b2c3d4-e5f6-7890-ab12-cd34ef56gh78\",\n  \"language_code\": \"hi-IN\",\n  \"script_code\": \"Deva\"\n}"
+            },
+            {
+              "name": "400 Bad Request",
+              "originalRequest": {},
+              "status": "Bad Request",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "403 Forbidden",
+              "originalRequest": {},
+              "status": "Forbidden",
+              "code": 403,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "422 Unprocessable Entity",
+              "originalRequest": {},
+              "status": "Unprocessable Entity",
+              "code": 422,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "429 Quota Exceeded",
+              "originalRequest": {},
+              "status": "Quota Exceeded",
+              "code": 429,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "500 Internal Server Error",
+              "originalRequest": {},
+              "status": "Internal Server Error",
+              "code": 500,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Chat Completion",
+      "item": [
+        {
+          "name": "Chat Completion",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "api-subscription-key",
+                "value": "{{api_key}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/chat/completions",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "chat",
+                "completions"
+              ]
+            },
+            "description": "Source: https://docs.sarvam.ai/api-reference/chat/chat-completions",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"Hello, can you explain the concept of quantum computing?\"\n    }\n  ],\n  \"model\": \"sarvam-105b\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "name": "200 Successful Response",
+              "originalRequest": {},
+              "status": "Successful Response",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"id\": \"chatcmpl-7a1b2c3d4e5f67890123456789abcdef\",\n  \"choices\": [\n    {\n      \"finish_reason\": \"stop\",\n      \"index\": 0,\n      \"message\": {\n        \"content\": \"Quantum computing is a type of computation that uses quantum bits or qubits, which can exist in multiple states simultaneously, enabling certain calculations to be performed much faster than classical\",\n        \"role\": \"assistant\",\n        \"refusal\": \"\",\n        \"reasoning_content\": \"The explanation covers the basics of quantum computing, focusing on qubits and their superposition property.\",\n        \"tool_calls\": [\n          {\n            \"id\": \"toolcall-1234abcd\",\n            \"type\": \"function\",\n            \"function\": {\n              \"name\": \"explain_quantum_computing\",\n              \"arguments\": \"{\\\"detail_level\\\": \\\"basic\\\"}\"\n            }\n          }\n        ]\n      },\n      \"logprobs\": {}\n    }\n  ],\n  \"created\": 1712345678,\n  \"model\": \"sarvam-105b\",\n  \"object\": \"chat.completion\",\n  \"service_tier\": \"premium\",\n  \"system_fingerprint\": \"sysfp-20240601-abcdef123456\",\n  \"usage\": {\n    \"completion_tokens\": 120,\n    \"prompt_tokens\": 15,\n    \"total_tokens\": 135,\n    \"completion_tokens_details\": {},\n    \"prompt_tokens_details\": {}\n  }\n}"
+            },
+            {
+              "name": "400 Bad Request",
+              "originalRequest": {},
+              "status": "Bad Request",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "403 Forbidden",
+              "originalRequest": {},
+              "status": "Forbidden",
+              "code": 403,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "422 Unprocessable Entity",
+              "originalRequest": {},
+              "status": "Unprocessable Entity",
+              "code": 422,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "429 Quota Exceeded",
+              "originalRequest": {},
+              "status": "Quota Exceeded",
+              "code": 429,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "500 Internal Server Error",
+              "originalRequest": {},
+              "status": "Internal Server Error",
+              "code": 500,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Document Intelligence",
+      "item": [
+        {
+          "name": "Create Job",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "api-subscription-key",
+                "value": "{{api_key}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/doc-digitization/job/v1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "doc-digitization",
+                "job",
+                "v1"
+              ]
+            },
+            "description": "Creates a new Document Intelligence job.\n\n**Supported Languages (BCP-47 format):**\n- `hi-IN`: Hindi (default)\n- `en-IN`: English\n- `bn-IN`: Bengali\n- `gu-IN`: Gujarati\n- `kn-IN`: Kannada\n- `ml-IN`: Malayalam\n- `mr-IN`: Marathi\n- `od-IN`: Odia\n- `pa-IN`: Punjabi\n- `ta-IN`: Tamil\n- `te-IN`: Telugu\n- `ur-IN`: Urdu\n- `as-IN`: Assamese\n- `brx-IN`: Bodo\n- `doi-IN`: Dogri\n- `ks-IN`: Kashmiri\n- `kok-IN`: Konkani\n- `mai-IN`: Maithili\n- `mni-IN`: Manipuri\n- `ne-IN`: Nepali\n- `sa-IN`: Sanskrit\n- `sat-IN`: Santali\n- `sd-IN`: Sindhi\n\n**Output Formats (delivered as ZIP file):**\n- `html`: Structured HTML files with layout preservation\n- `md`: Markdown files (default)\n- `json`: Structured JSON files for programmatic processing\n\nSource: https://docs.sarvam.ai/api-reference/document-intelligence/initialise",
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "name": "202 Successful Response",
+              "originalRequest": {},
+              "status": "Successful Response",
+              "code": 202,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"job_id\": \"string\",\n  \"storage_container_type\": \"Azure\",\n  \"job_parameters\": {\n    \"language\": \"hi-IN\",\n    \"output_format\": \"html\"\n  },\n  \"job_state\": \"Accepted\"\n}"
+            },
+            {
+              "name": "400 Bad Request",
+              "originalRequest": {},
+              "status": "Bad Request",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "403 Forbidden",
+              "originalRequest": {},
+              "status": "Forbidden",
+              "code": 403,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "429 Quota Exceeded / Rate Limited",
+              "originalRequest": {},
+              "status": "Quota Exceeded / Rate Limited",
+              "code": 429,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "500 Internal Server Error",
+              "originalRequest": {},
+              "status": "Internal Server Error",
+              "code": 500,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "503 Service Unavailable",
+              "originalRequest": {},
+              "status": "Service Unavailable",
+              "code": 503,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            }
+          ]
+        },
+        {
+          "name": "Get Upload URLs",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "api-subscription-key",
+                "value": "{{api_key}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/doc-digitization/job/v1/upload-files",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "doc-digitization",
+                "job",
+                "v1",
+                "upload-files"
+              ]
+            },
+            "description": "Returns presigned URLs for uploading input files.\n\n**File Constraints:**\n- Exactly one file required (PDF or ZIP)\n- PDF files: `.pdf` extension\n- ZIP files: `.zip` extension\n\nSource: https://docs.sarvam.ai/api-reference/document-intelligence/get-upload-links",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"job_id\": \"3fa85f64-5717-4562-b3fc-2c963f66afa6\",\n  \"files\": [\n    \"invoice_2024.pdf\"\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "name": "200 Successful Response",
+              "originalRequest": {},
+              "status": "Successful Response",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"job_id\": \"3fa85f64-5717-4562-b3fc-2c963f66afa6\",\n  \"job_state\": \"Accepted\",\n  \"upload_urls\": {},\n  \"storage_container_type\": \"Azure\"\n}"
+            },
+            {
+              "name": "400 Bad Request",
+              "originalRequest": {},
+              "status": "Bad Request",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "403 Forbidden",
+              "originalRequest": {},
+              "status": "Forbidden",
+              "code": 403,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "429 Quota Exceeded / Rate Limited",
+              "originalRequest": {},
+              "status": "Quota Exceeded / Rate Limited",
+              "code": 429,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "500 Internal Server Error",
+              "originalRequest": {},
+              "status": "Internal Server Error",
+              "code": 500,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "503 Service Unavailable",
+              "originalRequest": {},
+              "status": "Service Unavailable",
+              "code": 503,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            }
+          ]
+        },
+        {
+          "name": "Start Job",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "api-subscription-key",
+                "value": "{{api_key}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/doc-digitization/job/v1/{{job_id}}/start",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "doc-digitization",
+                "job",
+                "v1",
+                "{job_id}",
+                "start"
+              ]
+            },
+            "description": "Validates the uploaded file and starts processing.\n\n**Validation Checks:**\n- File must be uploaded before starting\n- File size must not exceed 200 MB\n- PDF must be parseable by the PDF parser\n- ZIP must contain only JPEG/PNG images\n- ZIP must be flat (no nested folders beyond one level)\n- ZIP must contain at least one valid image\n- Page/image count must not exceed 10 (returns `400` with `invalid_request_error` if exceeded)\n- User must have sufficient credits\n\n**Processing:**\nJob runs asynchronously. Poll the status endpoint or use webhook callback for completion notification.\n\nSource: https://docs.sarvam.ai/api-reference/document-intelligence/start"
+          },
+          "response": [
+            {
+              "name": "202 Successful Response",
+              "originalRequest": {},
+              "status": "Successful Response",
+              "code": 202,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"job_id\": \"3fa85f64-5717-4562-b3fc-2c963f66afa6\",\n  \"job_state\": \"Accepted\",\n  \"created_at\": \"2024-01-15T09:30:00Z\",\n  \"updated_at\": \"2024-01-15T09:30:00Z\",\n  \"storage_container_type\": \"Azure\",\n  \"total_files\": 1,\n  \"successful_files_count\": 0,\n  \"failed_files_count\": 0,\n  \"error_message\": \"\",\n  \"job_details\": [\n    {\n      \"inputs\": [\n        {\n          \"file_name\": \"invoice_2024_01.pdf\",\n          \"file_id\": \"file_9b8f7d6a-1234-4c56-8e9f-abcdef123456\"\n        }\n      ],\n      \"outputs\": [\n        {\n          \"file_name\": \"invoice_2024_01_output.json\",\n          \"file_id\": \"file_1a2b3c4d-5678-4e90-b123-fedcba987654\"\n        }\n      ],\n      \"state\": \"Pending\",\n      \"total_pages\": 5,\n      \"pages_processed\": 0,\n      \"pages_succeeded\": 0,\n      \"pages_failed\": 0,\n      \"error_message\": \"\",\n      \"error_code\": null,\n      \"page_errors\": []\n    }\n  ]\n}"
+            },
+            {
+              "name": "400 Bad Request",
+              "originalRequest": {},
+              "status": "Bad Request",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "403 Forbidden",
+              "originalRequest": {},
+              "status": "Forbidden",
+              "code": 403,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "429 Quota Exceeded / Rate Limited",
+              "originalRequest": {},
+              "status": "Quota Exceeded / Rate Limited",
+              "code": 429,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "500 Internal Server Error",
+              "originalRequest": {},
+              "status": "Internal Server Error",
+              "code": 500,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "503 Service Unavailable",
+              "originalRequest": {},
+              "status": "Service Unavailable",
+              "code": 503,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            }
+          ]
+        },
+        {
+          "name": "Get Job Status",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "api-subscription-key",
+                "value": "{{api_key}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/doc-digitization/job/v1/{{job_id}}/status",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "doc-digitization",
+                "job",
+                "v1",
+                "{job_id}",
+                "status"
+              ]
+            },
+            "description": "Returns the current status of a job with page-level metrics.\n\n**Job States:**\n- `Accepted`: Job created, awaiting file upload\n- `Pending`: File uploaded, waiting to start\n- `Running`: Processing in progress\n- `Completed`: All pages processed successfully\n- `PartiallyCompleted`: Some pages succeeded, some failed\n- `Failed`: All pages failed or job-level error\n\n**Page Metrics:**\nResponse includes detailed progress: total pages, pages processed, succeeded, failed, and per-page errors.\n\nSource: https://docs.sarvam.ai/api-reference/document-intelligence/get-status"
+          },
+          "response": [
+            {
+              "name": "200 Successful Response",
+              "originalRequest": {},
+              "status": "Successful Response",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"job_id\": \"3fa85f64-5717-4562-b3fc-2c963f66afa6\",\n  \"job_state\": \"Pending\",\n  \"created_at\": \"2024-01-15T09:30:00Z\",\n  \"updated_at\": \"2024-01-15T10:00:00Z\",\n  \"storage_container_type\": \"Azure\",\n  \"total_files\": 1,\n  \"successful_files_count\": 0,\n  \"failed_files_count\": 0,\n  \"error_message\": \"\",\n  \"job_details\": [\n    {\n      \"inputs\": [\n        {\n          \"file_name\": \"invoice_january.pdf\",\n          \"file_id\": \"file-1234abcd\"\n        }\n      ],\n      \"outputs\": [\n        {\n          \"file_name\": \"invoice_january_output.json\",\n          \"file_id\": \"file-5678efgh\"\n        }\n      ],\n      \"state\": \"Pending\",\n      \"total_pages\": 12,\n      \"pages_processed\": 0,\n      \"pages_succeeded\": 0,\n      \"pages_failed\": 0,\n      \"error_message\": \"\",\n      \"error_code\": null,\n      \"page_errors\": []\n    }\n  ]\n}"
+            },
+            {
+              "name": "400 Bad Request",
+              "originalRequest": {},
+              "status": "Bad Request",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "403 Forbidden",
+              "originalRequest": {},
+              "status": "Forbidden",
+              "code": 403,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "429 Quota Exceeded / Rate Limited",
+              "originalRequest": {},
+              "status": "Quota Exceeded / Rate Limited",
+              "code": 429,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "500 Internal Server Error",
+              "originalRequest": {},
+              "status": "Internal Server Error",
+              "code": 500,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "503 Service Unavailable",
+              "originalRequest": {},
+              "status": "Service Unavailable",
+              "code": 503,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            }
+          ]
+        },
+        {
+          "name": "Get Download URLs",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "api-subscription-key",
+                "value": "{{api_key}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/doc-digitization/job/v1/{{job_id}}/download-files",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "doc-digitization",
+                "job",
+                "v1",
+                "{job_id}",
+                "download-files"
+              ]
+            },
+            "description": "Returns presigned URLs for downloading output files.\n\n**Method:** POST only. A GET request to this path returns 405 Method Not Allowed.\n\n**Prerequisites:**\n- Job must be in `Completed` or `PartiallyCompleted` state\n- Failed jobs have no output available\n\nSource: https://docs.sarvam.ai/api-reference/document-intelligence/get-download-links"
+          },
+          "response": [
+            {
+              "name": "200 Successful Response",
+              "originalRequest": {},
+              "status": "Successful Response",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"job_id\": \"3fa85f64-5717-4562-b3fc-2c963f66afa6\",\n  \"job_state\": \"Completed\",\n  \"storage_container_type\": \"Azure\",\n  \"download_urls\": {\n    \"invoice_12345.pdf\": {\n      \"file_url\": \"https://azureblobstorage.blob.core.windows.net/documents/invoice_12345.pdf?sv=2023-01-01&sr=b&sig=abcdef1234567890\",\n      \"file_metadata\": {\n        \"contentType\": \"application/pdf\",\n        \"fileSize\": 245760,\n        \"lastModified\": \"2024-06-10T12:00:00Z\"\n      }\n    },\n    \"summary_12345.json\": {\n      \"file_url\": \"https://azureblobstorage.blob.core.windows.net/documents/summary_12345.json?sv=2023-01-01&sr=b&sig=abcdef1234567890\",\n      \"file_metadata\": {\n        \"contentType\": \"application/json\",\n        \"fileSize\": 10240,\n        \"lastModified\": \"2024-06-10T12:00:00Z\"\n      }\n    }\n  },\n  \"error_code\": null,\n  \"error_message\": null\n}"
+            },
+            {
+              "name": "400 Bad Request",
+              "originalRequest": {},
+              "status": "Bad Request",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "403 Forbidden",
+              "originalRequest": {},
+              "status": "Forbidden",
+              "code": 403,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "429 Quota Exceeded / Rate Limited",
+              "originalRequest": {},
+              "status": "Quota Exceeded / Rate Limited",
+              "code": 429,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "500 Internal Server Error",
+              "originalRequest": {},
+              "status": "Internal Server Error",
+              "code": 500,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            },
+            {
+              "name": "503 Service Unavailable",
+              "originalRequest": {},
+              "status": "Service Unavailable",
+              "code": 503,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{}"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
