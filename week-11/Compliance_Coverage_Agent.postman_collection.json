@@ -1,0 +1,843 @@
+{
+  "info": {
+    "name": "Compliance Coverage Agent",
+    "description": "Full API collection for the Compliance Coverage Agent backend: health, GDPR/EU AI Act scrape + ingest + hybrid retrieval, custom PDF upload + hybrid retrieval, and the .env/logo Settings API. Each folder includes success and validation-error sample requests. Pair with the 'Compliance Coverage Agent' environment (sets baseUrl to your running backend port).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:5000", "type": "string" },
+    { "key": "pdfDocumentId", "value": "", "type": "string" }
+  ],
+  "item": [
+    {
+      "name": "Health",
+      "item": [
+        {
+          "name": "Health Check",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Body is { status: \"ok\" }', () => {",
+                  "  const body = pm.response.json();",
+                  "  pm.expect(body.status).to.eql('ok');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/api/health", "host": ["{{baseUrl}}"], "path": ["api", "health"] }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "1. Scrape",
+      "item": [
+        {
+          "name": "Scrape GDPR",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Response has count and file', () => {",
+                  "  const body = pm.response.json();",
+                  "  pm.expect(body).to.have.property('count');",
+                  "  pm.expect(body).to.have.property('file');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/api/scrape/gdpr", "host": ["{{baseUrl}}"], "path": ["api", "scrape", "gdpr"] },
+            "description": "Scrapes https://gdpr-info.eu/ (Articles 1-99) and writes backend/data/gdpr_clauses_langchain.json. Takes a few minutes (polite 1s delay between requests). No request body."
+          },
+          "response": []
+        },
+        {
+          "name": "Scrape EU AI Act",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Response has count and file', () => {",
+                  "  const body = pm.response.json();",
+                  "  pm.expect(body).to.have.property('count');",
+                  "  pm.expect(body).to.have.property('file');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/api/scrape/eu-ai-act", "host": ["{{baseUrl}}"], "path": ["api", "scrape", "eu-ai-act"] },
+            "description": "Scrapes https://artificialintelligenceact.eu/ (Articles 1-113) and writes backend/data/eu_ai_act_clauses_langchain.json. Takes a few minutes (polite 1s delay between requests). No request body."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "2. Ingest",
+      "item": [
+        {
+          "name": "Ingest GDPR",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Response has inserted and updated', () => {",
+                  "  const body = pm.response.json();",
+                  "  pm.expect(body).to.have.property('inserted');",
+                  "  pm.expect(body).to.have.property('updated');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/api/ingest/gdpr", "host": ["{{baseUrl}}"], "path": ["api", "ingest", "gdpr"] },
+            "description": "Embeds (Mistral) and upserts (by clauseId) gdpr_clauses_langchain.json into MongoDB Atlas. Requires Scrape GDPR to have run first. Returns { inserted, updated }."
+          },
+          "response": []
+        },
+        {
+          "name": "Ingest EU AI Act",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Response has inserted and updated', () => {",
+                  "  const body = pm.response.json();",
+                  "  pm.expect(body).to.have.property('inserted');",
+                  "  pm.expect(body).to.have.property('updated');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/api/ingest/eu-ai-act", "host": ["{{baseUrl}}"], "path": ["api", "ingest", "eu-ai-act"] },
+            "description": "Embeds (Mistral) and upserts (by clauseId) eu_ai_act_clauses_langchain.json into MongoDB Atlas. Requires Scrape EU AI Act to have run first. Returns { inserted, updated }."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "3. Retrieve - GDPR",
+      "item": [
+        {
+          "name": "Retrieve GDPR - Hybrid Search (default)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Top match is Art. 17 GDPR', () => {",
+                  "  const body = pm.response.json();",
+                  "  pm.expect(body.matches[0].clauseId).to.eql('Art. 17 GDPR');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"story\": \"User can request full deletion of their account and data\",\n  \"topK\": 5\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": { "raw": "{{baseUrl}}/api/retrieve/gdpr", "host": ["{{baseUrl}}"], "path": ["api", "retrieve", "gdpr"] },
+            "description": "Vector search + keyword ($text) search fused via RRF, then Groq rerank. useHybridSearch omitted => defaults to true. Expects Art. 17 GDPR (Right to erasure) as top match."
+          },
+          "response": []
+        },
+        {
+          "name": "Retrieve GDPR - Vector Only (hybrid disabled)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Returns matches array', () => {",
+                  "  pm.expect(pm.response.json().matches).to.be.an('array');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"story\": \"User can request full deletion of their account and data\",\n  \"topK\": 5,\n  \"useHybridSearch\": false\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": { "raw": "{{baseUrl}}/api/retrieve/gdpr", "host": ["{{baseUrl}}"], "path": ["api", "retrieve", "gdpr"] },
+            "description": "Same query with useHybridSearch explicitly false — compare ranking against the hybrid request above."
+          },
+          "response": []
+        },
+        {
+          "name": "Retrieve GDPR - Validation Error (missing story)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 400', () => pm.response.to.have.status(400));",
+                  "pm.test('Error mentions story', () => {",
+                  "  pm.expect(pm.response.json().error).to.include('story');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{}", "options": { "raw": { "language": "json" } } },
+            "url": { "raw": "{{baseUrl}}/api/retrieve/gdpr", "host": ["{{baseUrl}}"], "path": ["api", "retrieve", "gdpr"] },
+            "description": "Expects 400 with { error: \"`story` is required and must be a non-empty string\" }."
+          },
+          "response": []
+        },
+        {
+          "name": "Retrieve GDPR - Validation Error (invalid topK)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 400', () => pm.response.to.have.status(400));",
+                  "pm.test('Error mentions topK', () => {",
+                  "  pm.expect(pm.response.json().error).to.include('topK');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"story\": \"User can request full deletion of their account and data\",\n  \"topK\": -1\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": { "raw": "{{baseUrl}}/api/retrieve/gdpr", "host": ["{{baseUrl}}"], "path": ["api", "retrieve", "gdpr"] },
+            "description": "topK must be a positive number. Expects 400 with { error: \"`topK` must be a positive number\" }."
+          },
+          "response": []
+        },
+        {
+          "name": "Retrieve GDPR - Validation Error (invalid useHybridSearch type)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 400', () => pm.response.to.have.status(400));",
+                  "pm.test('Error mentions useHybridSearch', () => {",
+                  "  pm.expect(pm.response.json().error).to.include('useHybridSearch');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"story\": \"User can request full deletion of their account and data\",\n  \"useHybridSearch\": \"yes\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": { "raw": "{{baseUrl}}/api/retrieve/gdpr", "host": ["{{baseUrl}}"], "path": ["api", "retrieve", "gdpr"] },
+            "description": "useHybridSearch must be a boolean, not a string. Expects 400 with { error: \"`useHybridSearch` must be a boolean\" }."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "4. Retrieve - EU AI Act",
+      "item": [
+        {
+          "name": "Retrieve EU AI Act - Hybrid Search (default)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Returns matches array', () => {",
+                  "  pm.expect(pm.response.json().matches).to.be.an('array');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"story\": \"Company deploys a biometric identification system in public spaces\",\n  \"topK\": 5\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": { "raw": "{{baseUrl}}/api/retrieve/eu-ai-act", "host": ["{{baseUrl}}"], "path": ["api", "retrieve", "eu-ai-act"] },
+            "description": "Vector + keyword hybrid search fused via RRF, then Groq rerank against the EU AI Act collection."
+          },
+          "response": []
+        },
+        {
+          "name": "Retrieve EU AI Act - Vector Only (hybrid disabled)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": ["pm.test('Status code is 200', () => pm.response.to.have.status(200));"]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"story\": \"High risk AI system conformity assessment\",\n  \"topK\": 3,\n  \"useHybridSearch\": false\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": { "raw": "{{baseUrl}}/api/retrieve/eu-ai-act", "host": ["{{baseUrl}}"], "path": ["api", "retrieve", "eu-ai-act"] },
+            "description": "Expects Article 43 (Conformity Assessment) to rank highly."
+          },
+          "response": []
+        },
+        {
+          "name": "Retrieve EU AI Act - Validation Error (missing story)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": ["pm.test('Status code is 400', () => pm.response.to.have.status(400));"]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{}", "options": { "raw": { "language": "json" } } },
+            "url": { "raw": "{{baseUrl}}/api/retrieve/eu-ai-act", "host": ["{{baseUrl}}"], "path": ["api", "retrieve", "eu-ai-act"] },
+            "description": "Expects 400 with { error: \"`story` is required and must be a non-empty string\" }."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "5. PDF - Upload & Documents",
+      "item": [
+        {
+          "name": "Upload PDF",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Response has documentId, documentName, chunks', () => {",
+                  "  const body = pm.response.json();",
+                  "  pm.expect(body).to.have.property('documentId');",
+                  "  pm.expect(body).to.have.property('documentName');",
+                  "  pm.expect(body).to.have.property('chunks');",
+                  "  pm.collectionVariables.set('pdfDocumentId', body.documentId);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [{ "key": "file", "type": "file", "src": [] }]
+            },
+            "url": { "raw": "{{baseUrl}}/api/pdf/upload", "host": ["{{baseUrl}}"], "path": ["api", "pdf", "upload"] },
+            "description": "Attach a PDF file in the 'file' form field (click 'Select Files' — src is left blank for portability). On success, the test script saves documentId into the {{pdfDocumentId}} collection variable for use by 'Retrieve PDF - Filtered by Document' below."
+          },
+          "response": []
+        },
+        {
+          "name": "Upload PDF - Validation Error (missing file)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 400', () => pm.response.to.have.status(400));",
+                  "pm.test('Error mentions file', () => {",
+                  "  pm.expect(pm.response.json().error).to.include('file');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": { "mode": "formdata", "formdata": [] },
+            "url": { "raw": "{{baseUrl}}/api/pdf/upload", "host": ["{{baseUrl}}"], "path": ["api", "pdf", "upload"] },
+            "description": "Send with no 'file' field attached. Expects 400 with { error: \"`file` is required\" }."
+          },
+          "response": []
+        },
+        {
+          "name": "Upload PDF - Validation Error (non-PDF file)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 400', () => pm.response.to.have.status(400));",
+                  "pm.test('Error mentions PDF', () => {",
+                  "  pm.expect(pm.response.json().error).to.include('PDF');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [{ "key": "file", "type": "file", "src": [] }]
+            },
+            "url": { "raw": "{{baseUrl}}/api/pdf/upload", "host": ["{{baseUrl}}"], "path": ["api", "pdf", "upload"] },
+            "description": "Attach a non-PDF file (e.g. a .txt or .png) to the 'file' field to trigger multer's fileFilter rejection. Expects 400 with { error: \"Only PDF files are supported\" }."
+          },
+          "response": []
+        },
+        {
+          "name": "List Uploaded PDF Documents",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Returns documents array', () => {",
+                  "  pm.expect(pm.response.json().documents).to.be.an('array');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/api/pdf/documents", "host": ["{{baseUrl}}"], "path": ["api", "pdf", "documents"] },
+            "description": "Lists every uploaded PDF grouped by document, with chunk counts and upload timestamps."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "6. PDF - Retrieve",
+      "item": [
+        {
+          "name": "Retrieve PDF - All Documents (Hybrid)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Returns matches array', () => {",
+                  "  pm.expect(pm.response.json().matches).to.be.an('array');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"story\": \"Zero-dollar RFP Message\",\n  \"topK\": 5\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": { "raw": "{{baseUrl}}/api/pdf/retrieve", "host": ["{{baseUrl}}"], "path": ["api", "pdf", "retrieve"] },
+            "description": "Searches across every uploaded PDF (no documentId filter). Run 'Upload PDF' first so there's data to search."
+          },
+          "response": []
+        },
+        {
+          "name": "Retrieve PDF - Filtered by Document",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": ["pm.test('Status code is 200', () => pm.response.to.have.status(200));"]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"story\": \"Zero-dollar RFP Message\",\n  \"topK\": 5,\n  \"documentId\": \"{{pdfDocumentId}}\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": { "raw": "{{baseUrl}}/api/pdf/retrieve", "host": ["{{baseUrl}}"], "path": ["api", "pdf", "retrieve"] },
+            "description": "Uses {{pdfDocumentId}}, captured automatically by the 'Upload PDF' request's test script, to restrict the search to one document."
+          },
+          "response": []
+        },
+        {
+          "name": "Retrieve PDF - Vector Only (hybrid disabled)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": ["pm.test('Status code is 200', () => pm.response.to.have.status(200));"]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"story\": \"Zero-dollar RFP Message\",\n  \"useHybridSearch\": false\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": { "raw": "{{baseUrl}}/api/pdf/retrieve", "host": ["{{baseUrl}}"], "path": ["api", "pdf", "retrieve"] },
+            "description": "Same query with hybrid search disabled, for comparison against the fused ranking."
+          },
+          "response": []
+        },
+        {
+          "name": "Retrieve PDF - Validation Error (missing story)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": ["pm.test('Status code is 400', () => pm.response.to.have.status(400));"]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{}", "options": { "raw": { "language": "json" } } },
+            "url": { "raw": "{{baseUrl}}/api/pdf/retrieve", "host": ["{{baseUrl}}"], "path": ["api", "pdf", "retrieve"] },
+            "description": "Expects 400 with { error: \"`story` is required and must be a non-empty string\" }."
+          },
+          "response": []
+        },
+        {
+          "name": "Retrieve PDF - Validation Error (invalid documentId type)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 400', () => pm.response.to.have.status(400));",
+                  "pm.test('Error mentions documentId', () => {",
+                  "  pm.expect(pm.response.json().error).to.include('documentId');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"story\": \"Zero-dollar RFP Message\",\n  \"documentId\": 12345\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": { "raw": "{{baseUrl}}/api/pdf/retrieve", "host": ["{{baseUrl}}"], "path": ["api", "pdf", "retrieve"] },
+            "description": "documentId must be a string. Expects 400 with { error: \"`documentId` must be a string\" }."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "7. Settings - Env Config",
+      "item": [
+        {
+          "name": "Get Settings",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Secrets are masked (no raw values)', () => {",
+                  "  const body = pm.response.json();",
+                  "  const secretFields = body.settings.filter(f => f.type === 'secret');",
+                  "  pm.expect(secretFields.length).to.be.greaterThan(0);",
+                  "  secretFields.forEach(f => pm.expect(f.value).to.eql(''));",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/api/settings", "host": ["{{baseUrl}}"], "path": ["api", "settings"] },
+            "description": "Returns every configurable .env field. Secret fields (MONGODB_URI, MISTRAL_API_KEY, GROQ_API_KEY) always come back with value: \"\" — only isSet indicates whether one is configured."
+          },
+          "response": []
+        },
+        {
+          "name": "Update Settings - Non-secret field (TOP_K)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Reports saved + restartRequired', () => {",
+                  "  const body = pm.response.json();",
+                  "  pm.expect(body.saved).to.eql(true);",
+                  "  pm.expect(body.restartRequired).to.eql(true);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"TOP_K\": \"10\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": { "raw": "{{baseUrl}}/api/settings", "host": ["{{baseUrl}}"], "path": ["api", "settings"] },
+            "description": "Writes TOP_K=10 to backend/.env in place. This sample value matches the documented default, so it's safe to run repeatedly. Restart the backend afterwards for the change to take effect."
+          },
+          "response": []
+        },
+        {
+          "name": "Update Settings - Secret field (GROQ_API_KEY)",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"GROQ_API_KEY\": \"REPLACE_WITH_YOUR_OWN_KEY_BEFORE_SENDING\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": { "raw": "{{baseUrl}}/api/settings", "host": ["{{baseUrl}}"], "path": ["api", "settings"] },
+            "description": "CAUTION: this overwrites your real GROQ_API_KEY in backend/.env. Replace the placeholder with an actual key (or your existing one) before sending — do not run as-is against an environment you care about."
+          },
+          "response": []
+        },
+        {
+          "name": "Update Settings - Validation Error (invalid number)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 400', () => pm.response.to.have.status(400));",
+                  "pm.test('Error mentions TOP_K', () => {",
+                  "  pm.expect(pm.response.json().error).to.include('TOP_K');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"TOP_K\": \"not-a-number\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": { "raw": "{{baseUrl}}/api/settings", "host": ["{{baseUrl}}"], "path": ["api", "settings"] },
+            "description": "TOP_K is schema-typed as a number. Expects 400 with { error: \"`TOP_K` must be a number\" }. Nothing is written to .env."
+          },
+          "response": []
+        },
+        {
+          "name": "Update Settings - No-op (empty body)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Reports saved: false', () => {",
+                  "  pm.expect(pm.response.json().saved).to.eql(false);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{}", "options": { "raw": { "language": "json" } } },
+            "url": { "raw": "{{baseUrl}}/api/settings", "host": ["{{baseUrl}}"], "path": ["api", "settings"] },
+            "description": "No recognized keys in the body => nothing to write. Expects { saved: false, restartRequired: false } and .env left untouched."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "8. Settings - Logo",
+      "item": [
+        {
+          "name": "Get Current Logo",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Response has a url field', () => {",
+                  "  pm.expect(pm.response.json()).to.have.property('url');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/api/settings/logo", "host": ["{{baseUrl}}"], "path": ["api", "settings", "logo"] },
+            "description": "Returns { url: null } if no custom logo has been uploaded (frontend falls back to the bundled Testleaf logo), otherwise { url: \"/uploads/logo.<ext>\" }."
+          },
+          "response": []
+        },
+        {
+          "name": "Upload Logo",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Response has an /uploads url', () => {",
+                  "  pm.expect(pm.response.json().url).to.include('/uploads/logo');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [{ "key": "logo", "type": "file", "src": [] }]
+            },
+            "url": { "raw": "{{baseUrl}}/api/settings/logo", "host": ["{{baseUrl}}"], "path": ["api", "settings", "logo"] },
+            "description": "Attach a PNG, JPEG, SVG, or WebP image (max 5MB) in the 'logo' form field. Replaces any previously uploaded logo."
+          },
+          "response": []
+        },
+        {
+          "name": "Upload Logo - Validation Error (wrong file type)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 400', () => pm.response.to.have.status(400));",
+                  "pm.test('Error mentions supported formats', () => {",
+                  "  pm.expect(pm.response.json().error).to.include('PNG');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [{ "key": "logo", "type": "file", "src": [] }]
+            },
+            "url": { "raw": "{{baseUrl}}/api/settings/logo", "host": ["{{baseUrl}}"], "path": ["api", "settings", "logo"] },
+            "description": "Attach a non-image file (e.g. a .pdf or .txt). Expects 400 with { error: \"Only PNG, JPEG, SVG, or WebP images are supported\" }."
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
